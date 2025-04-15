@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
         displayWordStats(prepositionCounts, prepositionsStats, 'preposition');
 
         // Articles analysis
-        const articles = ['a', 'an', 'the'];
+        const articles = ['a', 'an'];
         const articleCounts = countWords(tokens, articles);
         displayWordStats(articleCounts, articlesStats, 'article');
     }
