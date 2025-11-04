@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graham Scan Convex Hull Visualizer</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #001f3f 0%, #000000 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #001f3f 0%, #003d7a 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+      }
+
+      .controls {
+        padding: 20px 30px;
+        background: #f8f9fa;
+        border-bottom: 2px solid #e0e0e0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #001f3f 0%, #003d7a 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 31, 63, 0.4);
+      }
+
+      .btn-secondary {
+        background: #4a5568;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #2d3748;
+        transform: translateY(-2px);
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+      }
+
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #218838;
+        transform: translateY(-2px);
+      }
+
+      .btn-warning {
+        background: #ffc107;
+        color: #000;
+      }
+
+      .btn-warning:hover {
+        background: #e0a800;
+        transform: translateY(-2px);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .canvas-container {
+        padding: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #canvas {
+        border: 3px solid #001f3f;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        cursor: crosshair;
+        background: white;
+      }
+
+      .info-panel {
+        padding: 20px 30px;
+        background: #f8f9fa;
+        border-top: 2px solid #e0e0e0;
+      }
+
+      .info-section {
+        margin-bottom: 15px;
+      }
+
+      .info-section h3 {
+        color: #001f3f;
+        margin-bottom: 8px;
+        font-size: 1.2em;
+      }
+
+      .info-section p {
+        color: #555;
+        line-height: 1.6;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .stat-box {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 4px solid #001f3f;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-label {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+      }
+
+      .stat-value {
+        color: #333;
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 1.8em;
+        }
+
+        .controls {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+
+        #canvas {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔷 Graham Scan Convex Hull Visualizer</h1>
+        <p>
+          Click on the canvas to add points and visualize the convex hull
+          algorithm
+        </p>
+      </div>
+
+      <div class="controls">
+        <button
+          class="btn btn-primary"
+          id="computeBtn"
+          onclick="visualizer.computeConvexHull()"
+        >
+          Compute Convex Hull
+        </button>
+        <button
+          class="btn btn-success"
+          id="animateBtn"
+          onclick="visualizer.toggleAnimation()"
+        >
+          Animate Algorithm
+        </button>
+        <button
+          class="btn btn-secondary"
+          onclick="visualizer.generateRandomPoints()"
+        >
+          Random Points
+        </button>
+        <button class="btn btn-danger" onclick="visualizer.clearCanvas()">
+          Clear All
+        </button>
+        <button
+          class="btn btn-secondary"
+          onclick="location.href='experience.html'"
+        >
+          Back to Experience
+        </button>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="canvas" width="900" height="600"></canvas>
+      </div>
+
+      <div class="info-panel">
+        <div class="info-section">
+          <h3>📊 Statistics</h3>
+          <div class="stats">
+            <div class="stat-box">
+              <div class="stat-label">Total Points</div>
+              <div class="stat-value" id="totalPoints">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Hull Points</div>
+              <div class="stat-value" id="hullPoints">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3>ℹ️ About Graham Scan Algorithm</h3>
+          <p>
+            The Graham Scan is an efficient algorithm for finding the convex
+            hull of a set of points in the plane. It starts by finding the point
+            with the lowest y-coordinate (the starting point). Then it sorts all
+            other points by polar angle with respect to this starting point.
+            Finally, it constructs the hull by considering each point in sorted
+            order and making only left turns (counter-clockwise), removing
+            points that would create right turns.
+            <br /><br />
+            <strong>Time Complexity:</strong> O(n log n) where n is the number
+            of points<br />
+            <strong>Space Complexity:</strong> O(n)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      class ConvexHullVisualizer {
+        constructor() {
+          this.canvas = document.getElementById("canvas");
+          this.ctx = this.canvas.getContext("2d");
+          this.points = [];
+          this.hull = [];
+          this.isAnimating = false;
+          this.animationCancelled = false;
+          this.animateBtn = document.getElementById("animateBtn");
+          this.computeBtn = document.getElementById("computeBtn");
+
+          this.canvas.addEventListener("click", (e) => this.addPoint(e));
+          this.updateStats();
+        }
+
+        addPoint(e) {
+          if (this.isAnimating) return;
+
+          const rect = this.canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          this.points.push({ x, y });
+          this.hull = [];
+          this.draw();
+          this.updateStats();
+        }
+
+        clearCanvas() {
+          this.animationCancelled = true;
+          this.points = [];
+          this.hull = [];
+          this.isAnimating = false;
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          this.updateStats();
+          this.updateStatus("Ready");
+          this.resetAnimateButton();
+        }
+
+        generateRandomPoints() {
+          if (this.isAnimating) return;
+
+          this.points = [];
+          const numPoints = 15 + Math.floor(Math.random() * 20);
+          const margin = 50;
+
+          for (let i = 0; i < numPoints; i++) {
+            this.points.push({
+              x: margin + Math.random() * (this.canvas.width - 2 * margin),
+              y: margin + Math.random() * (this.canvas.height - 2 * margin),
+            });
+          }
+
+          this.hull = [];
+          this.draw();
+          this.updateStats();
+        }
+
+        draw(currentStep = null, tempHull = null, showFinalHull = true) {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+          // Draw hull if exists and should be shown
+          if (this.hull.length > 0 && showFinalHull) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = "#001f3f";
+            this.ctx.lineWidth = 3;
+            this.ctx.moveTo(this.hull[0].x, this.hull[0].y);
+            for (let i = 1; i < this.hull.length; i++) {
+              this.ctx.lineTo(this.hull[i].x, this.hull[i].y);
+            }
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+            // Fill the hull with semi-transparent color
+            this.ctx.fillStyle = "rgba(0, 31, 63, 0.1)";
+            this.ctx.fill();
+          }
+
+          // Draw temporary hull during animation
+          if (tempHull && tempHull.length > 1) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = "#ffa500";
+            this.ctx.lineWidth = 2;
+            this.ctx.setLineDash([5, 5]);
+            this.ctx.moveTo(tempHull[0].x, tempHull[0].y);
+            for (let i = 1; i < tempHull.length; i++) {
+              this.ctx.lineTo(tempHull[i].x, tempHull[i].y);
+            }
+            this.ctx.stroke();
+            this.ctx.setLineDash([]);
+          }
+
+          // Draw all points
+          this.points.forEach((point, index) => {
+            const isHullPoint = this.hull.some(
+              (p) => p.x === point.x && p.y === point.y
+            );
+            const isStartPoint = index === this.findLowestPoint();
+
+            this.ctx.beginPath();
+            this.ctx.arc(point.x, point.y, isHullPoint ? 8 : 6, 0, 2 * Math.PI);
+
+            if (isStartPoint) {
+              this.ctx.fillStyle = "#ff4444";
+            } else if (isHullPoint) {
+              this.ctx.fillStyle = "#00cc66";
+            } else {
+              this.ctx.fillStyle = "#1e90ff";
+            }
+
+            this.ctx.fill();
+            this.ctx.strokeStyle = "#000000";
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
+          });
+
+          // Highlight current point during animation
+          if (currentStep !== null && currentStep < this.points.length) {
+            const point = this.points[currentStep];
+            this.ctx.beginPath();
+            this.ctx.arc(point.x, point.y, 12, 0, 2 * Math.PI);
+            this.ctx.strokeStyle = "#ffa500";
+            this.ctx.lineWidth = 3;
+            this.ctx.stroke();
+          }
+        }
+
+        findLowestPoint() {
+          if (this.points.length === 0) return -1;
+          let lowestIndex = 0;
+          for (let i = 1; i < this.points.length; i++) {
+            if (
+              this.points[i].y > this.points[lowestIndex].y ||
+              (this.points[i].y === this.points[lowestIndex].y &&
+                this.points[i].x < this.points[lowestIndex].x)
+            ) {
+              lowestIndex = i;
+            }
+          }
+          return lowestIndex;
+        }
+
+        polarAngle(p0, p1) {
+          return Math.atan2(p1.y - p0.y, p1.x - p0.x);
+        }
+
+        distance(p0, p1) {
+          return Math.sqrt((p1.x - p0.x) ** 2 + (p1.y - p0.y) ** 2);
+        }
+
+        ccw(p1, p2, p3) {
+          return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x);
+        }
+
+        computeConvexHull() {
+          if (this.points.length < 3) {
+            alert("Need at least 3 points to compute convex hull!");
+            return;
+          }
+
+          const lowestIndex = this.findLowestPoint();
+          const p0 = this.points[lowestIndex];
+
+          // Sort points by polar angle
+          const sortedPoints = this.points
+            .map((p, index) => ({ ...p, originalIndex: index }))
+            .filter((p, index) => index !== lowestIndex)
+            .sort((a, b) => {
+              const angleA = this.polarAngle(p0, a);
+              const angleB = this.polarAngle(p0, b);
+              if (angleA !== angleB) return angleA - angleB;
+              return this.distance(p0, a) - this.distance(p0, b);
+            });
+
+          // Graham scan
+          this.hull = [p0];
+
+          for (let point of sortedPoints) {
+            while (
+              this.hull.length > 1 &&
+              this.ccw(
+                this.hull[this.hull.length - 2],
+                this.hull[this.hull.length - 1],
+                point
+              ) <= 0
+            ) {
+              this.hull.pop();
+            }
+            this.hull.push(point);
+          }
+
+          this.draw(null, null, true);
+          this.updateStats();
+          this.updateStatus("Complete");
+        }
+
+        toggleAnimation() {
+          if (this.isAnimating) {
+            this.stopAnimation();
+          } else {
+            this.animateGrahamScan();
+          }
+        }
+
+        stopAnimation() {
+          this.animationCancelled = true;
+          this.isAnimating = false;
+          this.updateStatus("Stopped");
+          this.resetAnimateButton();
+        }
+
+        resetAnimateButton() {
+          this.animateBtn.textContent = "Animate Algorithm";
+          this.animateBtn.classList.remove("btn-warning");
+          this.animateBtn.classList.add("btn-success");
+        }
+
+        async animateGrahamScan() {
+          if (this.points.length < 3) {
+            alert("Need at least 3 points to compute convex hull!");
+            return;
+          }
+
+          this.isAnimating = true;
+          this.animationCancelled = false;
+          this.animateBtn.textContent = "Stop Animation";
+          this.animateBtn.classList.remove("btn-success");
+          this.animateBtn.classList.add("btn-warning");
+          this.updateStatus("Animating...");
+
+          const lowestIndex = this.findLowestPoint();
+          const p0 = this.points[lowestIndex];
+
+          // Sort points by polar angle
+          const sortedPoints = this.points
+            .filter((p, index) => index !== lowestIndex)
+            .sort((a, b) => {
+              const angleA = this.polarAngle(p0, a);
+              const angleB = this.polarAngle(p0, b);
+              if (angleA !== angleB) return angleA - angleB;
+              return this.distance(p0, a) - this.distance(p0, b);
+            });
+
+          this.hull = [p0];
+          this.draw(null, null, false);
+          await this.sleep(500);
+
+          if (this.animationCancelled) {
+            this.resetAnimateButton();
+            return;
+          }
+
+          for (let i = 0; i < sortedPoints.length; i++) {
+            if (this.animationCancelled) {
+              this.resetAnimateButton();
+              return;
+            }
+
+            const point = sortedPoints[i];
+
+            while (
+              this.hull.length > 1 &&
+              this.ccw(
+                this.hull[this.hull.length - 2],
+                this.hull[this.hull.length - 1],
+                point
+              ) <= 0
+            ) {
+              this.hull.pop();
+              this.draw(null, this.hull, false);
+              this.updateStats();
+              await this.sleep(300);
+
+              if (this.animationCancelled) {
+                this.resetAnimateButton();
+                return;
+              }
+            }
+
+            this.hull.push(point);
+            this.draw(null, this.hull, false);
+            this.updateStats();
+            await this.sleep(500);
+          }
+
+          if (!this.animationCancelled) {
+            // Show final hull
+            this.draw(null, null, true);
+            this.isAnimating = false;
+            this.updateStatus("Complete");
+            this.resetAnimateButton();
+          }
+        }
+
+        sleep(ms) {
+          return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        updateStats() {
+          document.getElementById("totalPoints").textContent =
+            this.points.length;
+          document.getElementById("hullPoints").textContent = this.hull.length;
+        }
+
+        updateStatus(status) {
+          // Status display removed - this is a no-op function
+          // kept for backward compatibility
+        }
+      }
+
+      // Initialize visualizer
+      const visualizer = new ConvexHullVisualizer();
+    </script>
+  </body>
+</html>

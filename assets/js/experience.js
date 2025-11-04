@@ -9,14 +9,14 @@ const exp = [
     cardImage: "assets/images/experience-page/flipkart.jpg",
     place: "IIIT Hyderabad",
     time: "(feb, 2025 - april, 2025)",
-    desp: "<li>Our IoT-based Warehouse Management System automates pharmaceutical storage using sensors, RFID, and ESP32 microcontrollers.</li><li>We integrated Meta’s LLaVA (LLaMA Vision Assistant) model for real-time OCR and visual classification of chemical labels.</li> <li>This enables intelligent, safe, and efficient compartment control based on chemical properties.</li>",
+    desp: "<li>Our IoT-based Warehouse Management System automates pharmaceutical storage using sensors, RFID, and ESP32 microcontrollers.</li><li>We integrated Meta's LLaVA (LLaMA Vision Assistant) model for real-time OCR and visual classification of chemical labels.</li><li>This enables intelligent, safe, and efficient compartment control based on chemical properties.</li>",
   },
   {
-    title: "",
-    cardImage: "assets/images/experience-page/gsoc.png",
-    place: "",
-    time: "",
-    desp: "",
+    title: "Graham Scan Convex Hull Visualizer",
+    cardImage: "assets/images/experience-page/graham.png",
+    place: "IIIT Hyderabad",
+    time: "Oct, 2025 - Dec, 2025",
+    desp: "<li>Interactive web-based visualizer for the Graham Scan algorithm to compute convex hulls.</li><li>Features include point plotting, real-time animation, and step-by-step algorithm execution.</li><li>Built with vanilla JavaScript and HTML5 Canvas for smooth, efficient rendering.</li><br><a href='graham-scan.html' target='_blank' rel='noopener noreferrer'>Visualizer</a>",
   },
   {
     title: "",
@@ -27,13 +27,12 @@ const exp = [
   },
 ];
 
+
 const showCards2 = () => {
   let output = "";
   exp.forEach(
-    ({ title, cardImage, place, time, desp }) =>
-      (output += `        
-    <div class="col gaap" data-aos="fade-up" data-aos-easing="linear" data-aos-delay="100" data-aos-duration="400"> 
-      <div class="card card1">
+    ({ title, cardImage, place, time, desp, link }) => {
+      const cardContent = `
         <img src="${cardImage}" class="featured-image"/>
         <article class="card-body">
           <header>
@@ -49,11 +48,36 @@ const showCards2 = () => {
             </ol>
           </header>
         </article>
+      `;
+      
+      if (link) {
+        output += `        
+    <div class="col gaap" data-aos="fade-up" data-aos-easing="linear" data-aos-delay="100" data-aos-duration="400"> 
+      <a href="${link}" style="text-decoration: none; color: inherit;">
+        <div class="card card1" style="cursor: pointer; transition: transform 0.3s ease;" 
+             onmouseover="this.style.transform='translateY(-10px)'" 
+             onmouseout="this.style.transform='translateY(0)'">
+          ${cardContent}
+        </div>
+      </a>
+    </div>
+      `;
+      } else {
+        output += `        
+    <div class="col gaap" data-aos="fade-up" data-aos-easing="linear" data-aos-delay="100" data-aos-duration="400"> 
+      <div class="card card1">
+        ${cardContent}
       </div>
     </div>
-      `)
+      `;
+      }
+    }
   );
   experiencecards.innerHTML = output;
+  // Refresh AOS to animate the newly added cards
+  if (typeof AOS !== 'undefined') {
+    AOS.refresh();
+  }
 };
 document.addEventListener("DOMContentLoaded", showCards2);
 
@@ -97,6 +121,10 @@ const showCards = () => {
       `)
   );
   volunteership.innerHTML = output;
+  // Refresh AOS to animate the newly added cards
+  if (typeof AOS !== 'undefined') {
+    AOS.refresh();
+  }
 };
 document.addEventListener("DOMContentLoaded", showCards);
 
@@ -139,5 +167,9 @@ const showCards3 = () => {
       `)
   );
   hackathonsection.innerHTML = output;
+  // Refresh AOS to animate the newly added content
+  if (typeof AOS !== 'undefined') {
+    AOS.refresh();
+  }
 };
 document.addEventListener("DOMContentLoaded", showCards3);

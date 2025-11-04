@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graham Scan Thumbnail Generator</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #f0f0f0;
+      }
+      .thumbnail {
+        width: 800px;
+        height: 600px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        position: relative;
+      }
+      .header {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 40px;
+        text-align: center;
+      }
+      .header h1 {
+        color: white;
+        font-family: "Arial", sans-serif;
+        font-size: 3em;
+        margin: 0 0 10px 0;
+      }
+      .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-family: "Arial", sans-serif;
+        font-size: 1.3em;
+        margin: 0;
+      }
+      .canvas-area {
+        background: white;
+        margin: 30px;
+        border-radius: 15px;
+        padding: 30px;
+        height: 350px;
+        position: relative;
+      }
+      .demo-hull {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        height: 90%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="thumbnail">
+      <div class="header">
+        <h1>🔷 Graham Scan</h1>
+        <p>Convex Hull Visualizer</p>
+      </div>
+      <div class="canvas-area">
+        <svg
+          class="demo-hull"
+          viewBox="0 0 600 280"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- Convex Hull Polygon -->
+          <polygon
+            points="80,220 150,60 380,80 500,160 460,250 140,260"
+            fill="rgba(187, 134, 252, 0.2)"
+            stroke="#bb86fc"
+            stroke-width="4"
+          />
+
+          <!-- Interior Points -->
+          <circle
+            cx="280"
+            cy="180"
+            r="6"
+            fill="#3498db"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="320"
+            cy="200"
+            r="6"
+            fill="#3498db"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="350"
+            cy="150"
+            r="6"
+            fill="#3498db"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="250"
+            cy="220"
+            r="6"
+            fill="#3498db"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="200"
+            cy="160"
+            r="6"
+            fill="#3498db"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="400"
+            cy="180"
+            r="6"
+            fill="#3498db"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+
+          <!-- Hull Points (vertices) -->
+          <circle
+            cx="80"
+            cy="220"
+            r="9"
+            fill="#2ecc71"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="150"
+            cy="60"
+            r="9"
+            fill="#2ecc71"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="380"
+            cy="80"
+            r="9"
+            fill="#2ecc71"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="500"
+            cy="160"
+            r="9"
+            fill="#2ecc71"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="460"
+            cy="250"
+            r="9"
+            fill="#2ecc71"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+          <circle
+            cx="140"
+            cy="260"
+            r="9"
+            fill="#2ecc71"
+            stroke="#2c3e50"
+            stroke-width="2"
+          />
+
+          <!-- Starting Point highlight -->
+          <circle
+            cx="140"
+            cy="260"
+            r="11"
+            fill="none"
+            stroke="#e74c3c"
+            stroke-width="3"
+          />
+        </svg>
+      </div>
+    </div>
+    <div
+      style="
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 15px 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        font-family: Arial;
+      "
+    >
+      📸 Take a screenshot of this to use as thumbnail (800x600)
+    </div>
+  </body>
+</html>
