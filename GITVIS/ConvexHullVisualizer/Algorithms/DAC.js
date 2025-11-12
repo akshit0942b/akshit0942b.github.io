@@ -83,7 +83,7 @@ async function mergeHulls(leftHull, rightHull, delay) {
             // Visualize search
             var tempLine = makeTemporaryLine(rightHull[upperRight], leftHull[upperLeft], '#f39c12');
             highlightPoint(leftHull[upperLeft], '#f39c12');
-            await sleep(delay / 3);
+            await sleep(delay / 2);
             $(tempLine).remove();
             unhighlightPoint(leftHull[upperLeft]);
             
@@ -102,7 +102,7 @@ async function mergeHulls(leftHull, rightHull, delay) {
             // Visualize search
             var tempLine = makeTemporaryLine(leftHull[upperLeft], rightHull[upperRight], '#f39c12');
             highlightPoint(rightHull[upperRight], '#f39c12');
-            await sleep(delay / 3);
+            await sleep(delay / 2);
             $(tempLine).remove();
             unhighlightPoint(rightHull[upperRight]);
             
@@ -134,7 +134,7 @@ async function mergeHulls(leftHull, rightHull, delay) {
             // Visualize search
             var tempLine = makeTemporaryLine(rightHull[lowerRight], leftHull[lowerLeft], '#9b59b6');
             highlightPoint(leftHull[lowerLeft], '#9b59b6');
-            await sleep(delay / 3);
+            await sleep(delay / 2);
             $(tempLine).remove();
             unhighlightPoint(leftHull[lowerLeft]);
             
@@ -153,7 +153,7 @@ async function mergeHulls(leftHull, rightHull, delay) {
             // Visualize search
             var tempLine = makeTemporaryLine(leftHull[lowerLeft], rightHull[lowerRight], '#9b59b6');
             highlightPoint(rightHull[lowerRight], '#9b59b6');
-            await sleep(delay / 3);
+            await sleep(delay / 2);
             $(tempLine).remove();
             unhighlightPoint(rightHull[lowerRight]);
             
