@@ -16,7 +16,7 @@ const exp = [
     cardImage: "assets/images/experience-page/graham.png",
     place: "IIIT Hyderabad",
     time: "Oct, 2025 - Dec, 2025",
-    desp: "<li>Interactive web-based visualizer for the Graham Scan algorithm to compute convex hulls.</li><li>Features include point plotting, real-time animation, and step-by-step algorithm execution.</li><li>Built with vanilla JavaScript and HTML5 Canvas for smooth, efficient rendering.</li><br><a href='graham-scan.html' target='_blank' rel='noopener noreferrer'>Visualizer</a>",
+    desp: "<li>Interactive web-based visualizer for the Graham Scan algorithm to compute convex hulls.</li><li>Features include point plotting, real-time animation, and step-by-step algorithm execution.</li><li>Built with vanilla JavaScript and HTML5 Canvas for smooth, efficient rendering.</li><br><a href='GITVIS/ConvexHullVisualizer/index.html' target='_blank' rel='noopener noreferrer'>Visualizer</a>",
   },
   {
     title: "",
