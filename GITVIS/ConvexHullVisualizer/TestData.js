@@ -12,7 +12,7 @@
  */
 
 // Set this to true to auto-load test points from test_points.txt on page load
-var USE_TEST_FILE = false;
+var USE_TEST_FILE = true;
 
 /**
  * Load test points from test_points.txt file
@@ -41,7 +41,7 @@ function loadTestFile() {
  */
 function parseAndLoadPoints(text) {
     // Clear existing points
-    clearCanvas();
+    clearNodes();
     
     // Split into lines
     var lines = text.split('\n');
@@ -123,7 +123,7 @@ function loadTestData() {
     console.log('Points to load: ' + testCase.length);
     
     // Clear existing points
-    clearCanvas();
+    clearNodes();
     
     // Calculate canvas boundaries
     var offset = 50;
@@ -179,14 +179,16 @@ function exportCurrentPoints() {
     }
     
     var offset = 50;
-    var exported = points.map(function(p) {
+    var output = '# Exported points (' + points.length + ' total)\n';
+    
+    points.forEach(function(p) {
         // Convert canvas coordinates back to input coordinates
         var inputX = Math.round(p.x - canvas.left - offset);
         var inputY = Math.round(canvas.height - offset - (p.y - canvas.top));
-        return [inputX, inputY];
+        output += inputX + ', ' + inputY + '\n';
     });
     
-    console.log('Copy this to TestData.js:');
-    console.log(JSON.stringify(exported, null, 4));
-    return exported;
+    console.log('Copy this to test_points.txt:');
+    console.log(output);
+    return output;
 }
