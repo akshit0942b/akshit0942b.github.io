@@ -15,6 +15,29 @@
 var USE_TEST_FILE = true;
 
 /**
+ * Load points from uploaded file
+ */
+function loadPointsFromFile(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+    
+    console.log('Loading points from: ' + file.name);
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const text = e.target.result;
+        parseAndLoadPoints(text);
+    };
+    reader.onerror = function(e) {
+        console.error('Error reading file:', e);
+        alert('Error reading file. Please try again.');
+    };
+    reader.readAsText(file);
+}
+
+/**
  * Load test points from test_points.txt file
  */
 function loadTestFile() {
@@ -42,6 +65,9 @@ function loadTestFile() {
 function parseAndLoadPoints(text) {
     // Clear existing points
     clearNodes();
+    
+    // Get canvas dimensions
+    let canvas = document.getElementById("sandbox").getBoundingClientRect();
     
     // Split into lines
     var lines = text.split('\n');
@@ -125,6 +151,9 @@ function loadTestData() {
     // Clear existing points
     clearNodes();
     
+    // Get canvas dimensions
+    let canvas = document.getElementById("sandbox").getBoundingClientRect();
+    
     // Calculate canvas boundaries
     var offset = 50;
     var maxX = canvas.width - offset;
@@ -177,6 +206,9 @@ function exportCurrentPoints() {
         console.log('No points to export');
         return;
     }
+    
+    // Get canvas dimensions
+    let canvas = document.getElementById("sandbox").getBoundingClientRect();
     
     var offset = 50;
     var output = '# Exported points (' + points.length + ' total)\n';

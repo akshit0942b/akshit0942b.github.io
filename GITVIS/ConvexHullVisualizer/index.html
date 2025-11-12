@@ -71,17 +71,12 @@
 
     <!--Welcoming Page and Tutorial-->
 
-	<!-- Data Input Sidebar -->
-	<div id="dataSidebar" class="data-sidebar">
-		<button class="sidebar-toggle" onclick="toggleSidebar()">📊</button>
-		<div class="sidebar-content">
-			<h4>Import Dataset</h4>
-			<p class="sidebar-help">Enter coordinates as (x, y) pairs, one per line.<br>Origin (0,0) is at bottom-left corner:</p>
-			<textarea id="datasetInput" placeholder="Example:&#10;200, 150&#10;400, 300&#10;600, 200&#10;300, 400&#10;500, 100"></textarea>
-			<button class="btn btn-primary btn-block" onclick="generateFromDataset()">Load Points</button>
-			<button class="btn btn-default btn-block" onclick="clearDatasetInput()">Clear Input</button>
-			<div id="datasetStatus" class="dataset-status"></div>
-		</div>
+	<!-- File Upload Button -->
+	<div id="fileUploadContainer" style="position: fixed; top: 80px; right: 20px; z-index: 1000;">
+		<label for="fileInput" class="btn btn-info" style="cursor: pointer; margin: 0;">
+			📁 Load test_points.txt
+		</label>
+		<input type="file" id="fileInput" accept=".txt" style="display: none;" onchange="loadPointsFromFile(event)">
 	</div>
 
 	<!-- Statistics Bar -->
@@ -115,7 +110,6 @@
 <script type="text/javascript" src="TestData.js"></script>
 <script type="text/javascript" src="EventListener.js"></script>
 <script type="text/javascript" src="NavBarButtons.js"></script>
-<script type="text/javascript" src="DatasetLoader.js"></script>
 <script type="text/javascript" src="TestCases.js"></script>
 
 <!--Algorithms-->
