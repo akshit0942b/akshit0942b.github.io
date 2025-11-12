@@ -1,9 +1,15 @@
+// Helper function to calculate cross product
+// Returns positive if counter-clockwise, negative if clockwise, 0 if collinear
+function crossProduct(O, A, B) {
+    return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
+}
+
 // Helper function to find orientation of ordered triplet (p, q, r)
 // Returns: 0 -> Collinear, 1 -> Clockwise, 2 -> Counterclockwise
 function orientation(p, q, r) {
-    var val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    var val = crossProduct(p, q, r);
     if (Math.abs(val) < 1e-9) return 0;
-    return (val > 0) ? 1 : 2;
+    return (val > 0) ? 2 : 1; // CCW is positive
 }
 
 // Compare points by x-coordinate (and by y if x is same)
@@ -37,7 +43,8 @@ async function mergeHulls(leftHull, rightHull, delay) {
     // Find rightmost point of left hull
     var rightmostLeft = 0;
     for(var i = 1; i < n1; i++) {
-        if(leftHull[i].x > leftHull[rightmostLeft].x) {
+        if(leftHull[i].x > leftHull[rightmostLeft].x || 
+           (leftHull[i].x === leftHull[rightmostLeft].x && leftHull[i].y > leftHull[rightmostLeft].y)) {
             rightmostLeft = i;
         }
     }
@@ -45,7 +52,8 @@ async function mergeHulls(leftHull, rightHull, delay) {
     // Find leftmost point of right hull
     var leftmostRight = 0;
     for(var i = 1; i < n2; i++) {
-        if(rightHull[i].x < rightHull[leftmostRight].x) {
+        if(rightHull[i].x < rightHull[leftmostRight].x || 
+           (rightHull[i].x === rightHull[leftmostRight].x && rightHull[i].y < rightHull[leftmostRight].y)) {
             leftmostRight = i;
         }
     }
@@ -56,94 +64,102 @@ async function mergeHulls(leftHull, rightHull, delay) {
     await sleep(delay);
     
     // Find upper tangent
-    var indexLeft = rightmostLeft;
-    var indexRight = leftmostRight;
+    var upperLeft = rightmostLeft;
+    var upperRight = leftmostRight;
     var done = false;
     
     while(!done && !shouldStopAnimation) {
         done = true;
         
-        // Move clockwise in left hull
-        while(orientation(rightHull[indexRight], leftHull[indexLeft], 
-                         leftHull[(indexLeft + 1) % n1]) >= 0) {
-            indexLeft = (indexLeft + 1) % n1;
+        // Check if we need to move up on left hull
+        while(true) {
+            var nextLeft = (upperLeft + 1) % n1;
+            if(crossProduct(rightHull[upperRight], leftHull[upperLeft], leftHull[nextLeft]) <= 0) {
+                break;
+            }
+            upperLeft = nextLeft;
+            done = false;
             
             // Visualize search
-            var tempLine = makeTemporaryLine(rightHull[indexRight], leftHull[indexLeft], '#f39c12');
-            highlightPoint(leftHull[indexLeft], '#f39c12');
-            await sleep(delay / 2);
+            var tempLine = makeTemporaryLine(rightHull[upperRight], leftHull[upperLeft], '#f39c12');
+            highlightPoint(leftHull[upperLeft], '#f39c12');
+            await sleep(delay / 3);
             $(tempLine).remove();
-            unhighlightPoint(leftHull[indexLeft]);
+            unhighlightPoint(leftHull[upperLeft]);
             
             if(shouldStopAnimation) return [];
         }
         
-        // Move counterclockwise in right hull
-        while(orientation(leftHull[indexLeft], rightHull[indexRight], 
-                         rightHull[(n2 + indexRight - 1) % n2]) <= 0) {
-            indexRight = (n2 + indexRight - 1) % n2;
+        // Check if we need to move up on right hull
+        while(true) {
+            var nextRight = (upperRight + n2 - 1) % n2;
+            if(crossProduct(leftHull[upperLeft], rightHull[upperRight], rightHull[nextRight]) >= 0) {
+                break;
+            }
+            upperRight = nextRight;
             done = false;
             
             // Visualize search
-            var tempLine = makeTemporaryLine(leftHull[indexLeft], rightHull[indexRight], '#f39c12');
-            highlightPoint(rightHull[indexRight], '#f39c12');
-            await sleep(delay / 2);
+            var tempLine = makeTemporaryLine(leftHull[upperLeft], rightHull[upperRight], '#f39c12');
+            highlightPoint(rightHull[upperRight], '#f39c12');
+            await sleep(delay / 3);
             $(tempLine).remove();
-            unhighlightPoint(rightHull[indexRight]);
+            unhighlightPoint(rightHull[upperRight]);
             
             if(shouldStopAnimation) return [];
         }
     }
-    
-    var upperLeft = indexLeft;
-    var upperRight = indexRight;
     
     // Show upper tangent
     var upperTangent = makeTemporaryLine(leftHull[upperLeft], rightHull[upperRight], '#e74c3c');
     await sleep(delay);
     
     // Find lower tangent
-    indexLeft = rightmostLeft;
-    indexRight = leftmostRight;
+    var lowerLeft = rightmostLeft;
+    var lowerRight = leftmostRight;
     done = false;
     
     while(!done && !shouldStopAnimation) {
         done = true;
         
-        // Move counterclockwise in left hull
-        while(orientation(rightHull[indexRight], leftHull[indexLeft], 
-                         leftHull[(n1 + indexLeft - 1) % n1]) <= 0) {
-            indexLeft = (n1 + indexLeft - 1) % n1;
+        // Check if we need to move down on left hull
+        while(true) {
+            var nextLeft = (lowerLeft + n1 - 1) % n1;
+            if(crossProduct(rightHull[lowerRight], leftHull[lowerLeft], leftHull[nextLeft]) >= 0) {
+                break;
+            }
+            lowerLeft = nextLeft;
+            done = false;
             
             // Visualize search
-            var tempLine = makeTemporaryLine(rightHull[indexRight], leftHull[indexLeft], '#9b59b6');
-            highlightPoint(leftHull[indexLeft], '#9b59b6');
-            await sleep(delay / 2);
+            var tempLine = makeTemporaryLine(rightHull[lowerRight], leftHull[lowerLeft], '#9b59b6');
+            highlightPoint(leftHull[lowerLeft], '#9b59b6');
+            await sleep(delay / 3);
             $(tempLine).remove();
-            unhighlightPoint(leftHull[indexLeft]);
+            unhighlightPoint(leftHull[lowerLeft]);
             
             if(shouldStopAnimation) return [];
         }
         
-        // Move clockwise in right hull
-        while(orientation(leftHull[indexLeft], rightHull[indexRight], 
-                         rightHull[(indexRight + 1) % n2]) >= 0) {
-            indexRight = (indexRight + 1) % n2;
+        // Check if we need to move down on right hull
+        while(true) {
+            var nextRight = (lowerRight + 1) % n2;
+            if(crossProduct(leftHull[lowerLeft], rightHull[lowerRight], rightHull[nextRight]) <= 0) {
+                break;
+            }
+            lowerRight = nextRight;
             done = false;
             
             // Visualize search
-            var tempLine = makeTemporaryLine(leftHull[indexLeft], rightHull[indexRight], '#9b59b6');
-            highlightPoint(rightHull[indexRight], '#9b59b6');
-            await sleep(delay / 2);
+            var tempLine = makeTemporaryLine(leftHull[lowerLeft], rightHull[lowerRight], '#9b59b6');
+            highlightPoint(rightHull[lowerRight], '#9b59b6');
+            await sleep(delay / 3);
             $(tempLine).remove();
-            unhighlightPoint(rightHull[indexRight]);
+            unhighlightPoint(rightHull[lowerRight]);
             
             if(shouldStopAnimation) return [];
         }
     }
-    
-    var lowerLeft = indexLeft;
-    var lowerRight = indexRight;
     
     // Show lower tangent
     var lowerTangent = makeTemporaryLine(leftHull[lowerLeft], rightHull[lowerRight], '#27ae60');
@@ -153,18 +169,18 @@ async function mergeHulls(leftHull, rightHull, delay) {
     $(upperTangent).remove();
     $(lowerTangent).remove();
     
-    // Build merged hull
+    // Build merged hull in counter-clockwise order
     var mergedHull = [];
     
-    // Add points from left hull (from upper to lower going clockwise)
+    // Start from upper tangent on left hull, go counter-clockwise to lower tangent
     var index = upperLeft;
     mergedHull.push(leftHull[index]);
     while(index !== lowerLeft) {
-        index = (index + 1) % n1;
+        index = (index + n1 - 1) % n1;
         mergedHull.push(leftHull[index]);
     }
     
-    // Add points from right hull (from lower to upper going clockwise)
+    // From lower tangent on right hull, go counter-clockwise to upper tangent
     index = lowerRight;
     mergedHull.push(rightHull[index]);
     while(index !== upperRight) {
@@ -181,7 +197,7 @@ async function divideAndConquer(pointSet, delay) {
     
     var n = pointSet.length;
     
-    // Base case: if 3 or fewer points, return them in order
+    // Base case: if 3 or fewer points, compute hull directly
     if(n <= 3) {
         // Visualize base case
         pointSet.forEach(p => {
@@ -193,15 +209,28 @@ async function divideAndConquer(pointSet, delay) {
         });
         
         if(n === 1) return [pointSet[0]];
-        if(n === 2) return pointSet;
+        if(n === 2) return [pointSet[0], pointSet[1]];
         
-        // For 3 points, return them in counterclockwise order
-        var hull3 = [pointSet[0], pointSet[1], pointSet[2]];
-        if(orientation(hull3[0], hull3[1], hull3[2]) === 1) {
-            // Clockwise, so reverse
-            hull3 = [hull3[0], hull3[2], hull3[1]];
+        // For 3 points, return them in counter-clockwise order
+        var p0 = pointSet[0], p1 = pointSet[1], p2 = pointSet[2];
+        var cross = crossProduct(p0, p1, p2);
+        
+        if(cross > 0) {
+            // Already counter-clockwise
+            return [p0, p1, p2];
+        } else if(cross < 0) {
+            // Clockwise, reverse to make counter-clockwise
+            return [p0, p2, p1];
+        } else {
+            // Collinear - return two points farthest apart
+            var d01 = Math.sqrt((p1.x - p0.x)**2 + (p1.y - p0.y)**2);
+            var d02 = Math.sqrt((p2.x - p0.x)**2 + (p2.y - p0.y)**2);
+            var d12 = Math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2);
+            
+            if(d01 >= d02 && d01 >= d12) return [p0, p1];
+            if(d02 >= d01 && d02 >= d12) return [p0, p2];
+            return [p1, p2];
         }
-        return hull3;
     }
     
     // Divide into two halves
