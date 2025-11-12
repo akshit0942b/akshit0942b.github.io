@@ -12,11 +12,11 @@ const exp = [
     desp: "<li>Our IoT-based Warehouse Management System automates pharmaceutical storage using sensors, RFID, and ESP32 microcontrollers.</li><li>We integrated Meta's LLaVA (LLaMA Vision Assistant) model for real-time OCR and visual classification of chemical labels.</li><li>This enables intelligent, safe, and efficient compartment control based on chemical properties.</li>",
   },
   {
-    title: "Graham Scan Convex Hull Visualizer",
+    title: "Convex Hull Visualizer",
     cardImage: "assets/images/experience-page/graham.png",
     place: "IIIT Hyderabad",
     time: "Oct, 2025 - Dec, 2025",
-    desp: "<li>Interactive web-based visualizer for the Graham Scan algorithm to compute convex hulls.</li><li>Features include point plotting, real-time animation, and step-by-step algorithm execution.</li><li>Built with vanilla JavaScript and HTML5 Canvas for smooth, efficient rendering.</li><br><a href='GITVIS/ConvexHullVisualizer/index.html' target='_blank' rel='noopener noreferrer'>Visualizer</a>",
+    desp: "<li>Interactive web-based visualizer to compute convex hulls.</li><li>Features include point plotting, real-time animation, and step-by-step algorithm execution.</li><li>Built with vanilla JavaScript and HTML5 Canvas for smooth, efficient rendering.</li><br><a href='GITVIS/ConvexHullVisualizer/index.html' target='_blank' rel='noopener noreferrer'>Visualizer</a>",
   },
   {
     title: "",
