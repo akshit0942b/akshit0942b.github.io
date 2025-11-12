@@ -57,7 +57,13 @@ function removeHull(){
 }
 
 function randomPoints(){
-	var n = 20;
+	// Get the number of points from the input field, default to 20 if not specified
+	var numPointsInput = document.getElementById("numPointsToGenerate");
+	var n = numPointsInput ? parseInt(numPointsInput.value) || 20 : 20;
+	
+	// Ensure n is within reasonable bounds
+	n = Math.max(1, Math.min(n, 100));
+	
 	let canvas = document.getElementById("sandbox").getBoundingClientRect();
 	let offset = 100;
 	//boundaries
