@@ -86,6 +86,10 @@ async function ConvexHull_JarvisMarch(){
 
 		//change classname for colorchange
 		addToHull(nxtPoint);
+		
+		// Highlight as finalized hull vertex with bright green
+		highlightPoint(nxtPoint, '#2ecc71');
+		await sleep(delay / 2);
 
 		//pop new hullpoint out of point set 
 		sorted_points.splice(sorted_points.indexOf(hull[hull.length-1]), 1);

@@ -90,12 +90,17 @@ async function ConvexHull_GrahamScale(){
 				// Point makes a left turn, add to hull
 	      		hull.push(p);
 				addToHull(p);
+				// Highlight as finalized hull vertex with bright green
+				highlightPoint(p, '#2ecc71');
+				await sleep(delay / 2);
 				pointIndex++;
 				done++;
 	    	}
 			
 			removeTemporaryLines();
-			unhighlightPoint(p);
+			if(hull.indexOf(p) === -1){
+				unhighlightPoint(p);
+			}
 	    }
 	    else{
 	    	//closing line

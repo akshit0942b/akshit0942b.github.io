@@ -78,7 +78,12 @@ async function addSegments(line, points, delay) {
     
     if(!distal.max) {
         $(tempLine).remove();
-        return hull.push(line[0]);
+        // Finalize this point as a hull vertex
+        hull.push(line[0]);
+        addToHull(line[0]);
+        highlightPoint(line[0], '#2ecc71');
+        await sleep(delay / 2);
+        return;
     }
     
     // Highlight the farthest point found

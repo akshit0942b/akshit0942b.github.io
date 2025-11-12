@@ -56,7 +56,9 @@ async function ConvexHull_MonotoneChain() {
 		
 		lower.push(sorted_by_x[i]);
 		addToHull(sorted_by_x[i]);
-		await sleep(delay);
+		// Highlight as finalized hull vertex
+		highlightPoint(sorted_by_x[i], '#2ecc71');
+		await sleep(delay / 2);
 		unhighlightPoint(sorted_by_x[i]);
 	}
 
@@ -86,7 +88,9 @@ async function ConvexHull_MonotoneChain() {
 		
 		upper.push(sorted_by_x[i]);
 		addToHull(sorted_by_x[i]);
-		await sleep(delay);
+		// Highlight as finalized hull vertex
+		highlightPoint(sorted_by_x[i], '#2ecc71');
+		await sleep(delay / 2);
 		unhighlightPoint(sorted_by_x[i]);
 	}
 
