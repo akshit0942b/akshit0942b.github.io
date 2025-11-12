@@ -26,8 +26,10 @@
 							<li id='startButtonMonoChain' onclick="setStartButtonValue('Monotone Chain')" title="5"><a>Monotone Chain</a></li>
 						</ul>
 					</li>
-					<li id='numPointsInput'><a>Points to Generate: <input id="numPointsToGenerate" type="number" min="1" max="100" value="20" style="width: 60px; text-align: center;"></input></a></li>
-           			<li id='startButtonClearBoard' onclick="randomPoints()" title="R"><a>Random</a></li>
+					<li id='numPointsInput'><a>N: <input id="numPointsToGenerate" type="number" min="1" max="100" value="20"></input></a></li>
+					<li id='generatePointsButton'>
+						<button id="actualGeneratePointsButton" class="btn btn-default navbar-btn" type="button" title="Generate N points" onclick="randomPoints()">Generate</button>
+					</li>
 					<li id='startButtonStart'>
 						<button id="actualStartButton" class="btn btn-default navbar-btn" type="button" title="CTRL + B" onclick="Visualize()">Visualize!</button>
 					</li>

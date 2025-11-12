@@ -7185,6 +7185,16 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   background-color: #34495e;
   min-width: 10px;
   max-width: 40px;
+  color: #ffffff;
+}
+
+#numPointsToGenerate {
+  border: 0;
+  background-color: #34495e;
+  color: #ffffff;
+  width: 50px;
+  text-align: center;
+  max-width: 50px;
 }
 
 
