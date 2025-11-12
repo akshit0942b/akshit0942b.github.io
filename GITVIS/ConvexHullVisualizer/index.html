@@ -63,6 +63,19 @@
 
     <!--Welcoming Page and Tutorial-->
 
+	<!-- Data Input Sidebar -->
+	<div id="dataSidebar" class="data-sidebar">
+		<button class="sidebar-toggle" onclick="toggleSidebar()">📊</button>
+		<div class="sidebar-content">
+			<h4>Import Dataset</h4>
+			<p class="sidebar-help">Enter coordinates as (x, y) pairs, one per line:</p>
+			<textarea id="datasetInput" placeholder="Example:&#10;100, 200&#10;150, 300&#10;250, 150&#10;..."></textarea>
+			<button class="btn btn-primary btn-block" onclick="generateFromDataset()">Load Points</button>
+			<button class="btn btn-default btn-block" onclick="clearDatasetInput()">Clear Input</button>
+			<div id="datasetStatus" class="dataset-status"></div>
+		</div>
+	</div>
+
 	<!-- Statistics Bar -->
 	<div id="statsBar">
 		<div id="statsContent">
@@ -93,6 +106,7 @@
 <script type="text/javascript" src="Point.js"></script>
 <script type="text/javascript" src="EventListener.js"></script>
 <script type="text/javascript" src="NavBarButtons.js"></script>
+<script type="text/javascript" src="DatasetLoader.js"></script>
 
 <!--Algorithms-->
 <script type="text/javascript" src="Algorithms/JarvisMarch.js"></script>
