@@ -145,6 +145,12 @@ $(document).keydown(function(e) {
 	if(e.keyCode == 53) setStartButtonValue("Monotone Chain");
 });
 
+// Auto-load test data if enabled
+window.addEventListener('load', function() {
+	if (typeof USE_TEST_FILE !== 'undefined' && USE_TEST_FILE && typeof loadTestFile === 'function') {
+		loadTestFile();
+	}
+});
 
 
 
