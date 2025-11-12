@@ -35,60 +35,60 @@ function getDelay(){
 
 // Merge two convex hulls
 async function mergeHulls(leftHull, rightHull, delay) {
-    if(shouldStopAnimation) return [];
+    if (shouldStopAnimation) return [];
     
     var n1 = leftHull.length;
     var n2 = rightHull.length;
 
     if (n1 === 0) return rightHull;
     if (n2 === 0) return leftHull;
-    
-    // Find rightmost point of left hull
+
+    // Find the rightmost point of the left hull
     var rightmostLeft = 0;
-    for(var i = 1; i < n1; i++) {
-        if(leftHull[i].x > leftHull[rightmostLeft].x) {
+    for (var i = 1; i < n1; i++) {
+        if (leftHull[i].x > leftHull[rightmostLeft].x) {
             rightmostLeft = i;
         }
     }
-    
-    // Find leftmost point of right hull
+
+    // Find the leftmost point of the right hull
     var leftmostRight = 0;
-    for(var i = 1; i < n2; i++) {
-        if(rightHull[i].x < rightHull[leftmostRight].x) {
+    for (var i = 1; i < n2; i++) {
+        if (rightHull[i].x < rightHull[leftmostRight].x) {
             leftmostRight = i;
         }
     }
-    
-    // Visualize the starting points for merging
-    highlightPoint(leftHull[rightmostLeft], '#3498db');
-    highlightPoint(rightHull[leftmostRight], '#3498db');
-    await sleep(delay);
-    
-    // Find upper tangent
+
+    // Start finding the upper tangent
     var upperLeft = rightmostLeft;
     var upperRight = leftmostRight;
-    
+
+    highlightPoint(leftHull[upperLeft], '#3498db');
+    highlightPoint(rightHull[upperRight], '#3498db');
+    await sleep(delay);
+
     while (true) {
         if (shouldStopAnimation) return [];
-        var changed = false;
-        
-        // Check left hull for a better point
-        var nextLeft = (upperLeft + 1) % n1;
+        let changed = false;
+        let tempLine;
+
+        // Move up on the left hull
+        let nextLeft = (upperLeft + 1) % n1;
         if (crossProduct(rightHull[upperRight], leftHull[upperLeft], leftHull[nextLeft]) > 0) {
-            var tempLine = makeTemporaryLine(rightHull[upperRight], leftHull[nextLeft], '#f39c12');
+            tempLine = makeTemporaryLine(rightHull[upperRight], leftHull[nextLeft], '#f39c12');
             highlightPoint(leftHull[nextLeft], '#f39c12');
             await sleep(delay / 2);
             $(tempLine).remove();
             unhighlightPoint(leftHull[nextLeft]);
-
+            
             upperLeft = nextLeft;
             changed = true;
         }
-        
-        // Check right hull for a better point
-        var nextRight = (upperRight + n2 - 1) % n2;
+
+        // Move up on the right hull
+        let nextRight = (upperRight + n2 - 1) % n2;
         if (crossProduct(leftHull[upperLeft], rightHull[upperRight], rightHull[nextRight]) < 0) {
-            var tempLine = makeTemporaryLine(leftHull[upperLeft], rightHull[nextRight], '#f39c12');
+            tempLine = makeTemporaryLine(leftHull[upperLeft], rightHull[nextRight], '#f39c12');
             highlightPoint(rightHull[nextRight], '#f39c12');
             await sleep(delay / 2);
             $(tempLine).remove();
@@ -97,26 +97,26 @@ async function mergeHulls(leftHull, rightHull, delay) {
             upperRight = nextRight;
             changed = true;
         }
-        
+
         if (!changed) break;
     }
-
-    // Show upper tangent
+    
     var upperTangent = makeTemporaryLine(leftHull[upperLeft], rightHull[upperRight], '#e74c3c');
     await sleep(delay);
-    
-    // Find lower tangent
+
+    // Find the lower tangent
     var lowerLeft = rightmostLeft;
     var lowerRight = leftmostRight;
 
     while (true) {
         if (shouldStopAnimation) return [];
-        var changed = false;
+        let changed = false;
+        let tempLine;
 
-        // Check left hull for a better point
-        var nextLeft = (lowerLeft + n1 - 1) % n1;
+        // Move down on the left hull
+        let nextLeft = (lowerLeft + n1 - 1) % n1;
         if (crossProduct(rightHull[lowerRight], leftHull[lowerLeft], leftHull[nextLeft]) < 0) {
-            var tempLine = makeTemporaryLine(rightHull[lowerRight], leftHull[nextLeft], '#9b59b6');
+            tempLine = makeTemporaryLine(rightHull[lowerRight], leftHull[nextLeft], '#9b59b6');
             highlightPoint(leftHull[nextLeft], '#9b59b6');
             await sleep(delay / 2);
             $(tempLine).remove();
@@ -126,10 +126,10 @@ async function mergeHulls(leftHull, rightHull, delay) {
             changed = true;
         }
 
-        // Check right hull for a better point
-        var nextRight = (lowerRight + 1) % n2;
+        // Move down on the right hull
+        let nextRight = (lowerRight + 1) % n2;
         if (crossProduct(leftHull[lowerLeft], rightHull[lowerRight], rightHull[nextRight]) > 0) {
-            var tempLine = makeTemporaryLine(leftHull[lowerLeft], rightHull[nextRight], '#9b59b6');
+            tempLine = makeTemporaryLine(leftHull[lowerLeft], rightHull[nextRight], '#9b59b6');
             highlightPoint(rightHull[nextRight], '#9b59b6');
             await sleep(delay / 2);
             $(tempLine).remove();
@@ -141,33 +141,35 @@ async function mergeHulls(leftHull, rightHull, delay) {
 
         if (!changed) break;
     }
-    
-    // Show lower tangent
+
     var lowerTangent = makeTemporaryLine(leftHull[lowerLeft], rightHull[lowerRight], '#27ae60');
     await sleep(delay * 1.5);
-    
-    // Remove temporary tangent lines
+
     $(upperTangent).remove();
     $(lowerTangent).remove();
     unhighlightPoint(leftHull[rightmostLeft]);
     unhighlightPoint(rightHull[leftmostRight]);
-    
-    // Build merged hull in counter-clockwise order
+
+    // Construct the final merged hull
     var mergedHull = [];
     var index = upperLeft;
     mergedHull.push(leftHull[index]);
-    while(index !== lowerLeft) {
+    while (index !== lowerLeft) {
         index = (index + 1) % n1;
         mergedHull.push(leftHull[index]);
     }
-    
+
     index = lowerRight;
-    mergedHull.push(rightHull[index]);
-    while(index !== upperRight) {
-        index = (index + 1) % n2;
+    if (mergedHull[mergedHull.length - 1] !== rightHull[index]) {
         mergedHull.push(rightHull[index]);
     }
-    
+    while (index !== upperRight) {
+        index = (index + 1) % n2;
+        if (mergedHull[mergedHull.length - 1] !== rightHull[index]) {
+            mergedHull.push(rightHull[index]);
+        }
+    }
+
     return mergedHull;
 }
 
