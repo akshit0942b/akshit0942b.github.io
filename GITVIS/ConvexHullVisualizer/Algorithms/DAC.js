@@ -39,12 +39,14 @@ async function mergeHulls(leftHull, rightHull, delay) {
     
     var n1 = leftHull.length;
     var n2 = rightHull.length;
+
+    if (n1 === 0) return rightHull;
+    if (n2 === 0) return leftHull;
     
     // Find rightmost point of left hull
     var rightmostLeft = 0;
     for(var i = 1; i < n1; i++) {
-        if(leftHull[i].x > leftHull[rightmostLeft].x || 
-           (leftHull[i].x === leftHull[rightmostLeft].x && leftHull[i].y > leftHull[rightmostLeft].y)) {
+        if(leftHull[i].x > leftHull[rightmostLeft].x) {
             rightmostLeft = i;
         }
     }
@@ -52,13 +54,12 @@ async function mergeHulls(leftHull, rightHull, delay) {
     // Find leftmost point of right hull
     var leftmostRight = 0;
     for(var i = 1; i < n2; i++) {
-        if(rightHull[i].x < rightHull[leftmostRight].x || 
-           (rightHull[i].x === rightHull[leftmostRight].x && rightHull[i].y < rightHull[leftmostRight].y)) {
+        if(rightHull[i].x < rightHull[leftmostRight].x) {
             leftmostRight = i;
         }
     }
     
-    // Visualize the two hulls being merged
+    // Visualize the starting points for merging
     highlightPoint(leftHull[rightmostLeft], '#3498db');
     highlightPoint(rightHull[leftmostRight], '#3498db');
     await sleep(delay);
@@ -66,50 +67,40 @@ async function mergeHulls(leftHull, rightHull, delay) {
     // Find upper tangent
     var upperLeft = rightmostLeft;
     var upperRight = leftmostRight;
-    var done = false;
     
-    while(!done && !shouldStopAnimation) {
-        done = true;
+    while (true) {
+        if (shouldStopAnimation) return [];
+        var changed = false;
         
-        // Check if we need to move up on left hull
-        while(true) {
-            var nextLeft = (upperLeft + 1) % n1;
-            if(crossProduct(rightHull[upperRight], leftHull[upperLeft], leftHull[nextLeft]) <= 0) {
-                break;
-            }
+        // Check left hull for a better point
+        var nextLeft = (upperLeft + 1) % n1;
+        if (crossProduct(rightHull[upperRight], leftHull[upperLeft], leftHull[nextLeft]) > 0) {
+            var tempLine = makeTemporaryLine(rightHull[upperRight], leftHull[nextLeft], '#f39c12');
+            highlightPoint(leftHull[nextLeft], '#f39c12');
+            await sleep(delay / 2);
+            $(tempLine).remove();
+            unhighlightPoint(leftHull[nextLeft]);
+
             upperLeft = nextLeft;
-            done = false;
-            
-            // Visualize search
-            var tempLine = makeTemporaryLine(rightHull[upperRight], leftHull[upperLeft], '#f39c12');
-            highlightPoint(leftHull[upperLeft], '#f39c12');
-            await sleep(delay / 2);
-            $(tempLine).remove();
-            unhighlightPoint(leftHull[upperLeft]);
-            
-            if(shouldStopAnimation) return [];
+            changed = true;
         }
         
-        // Check if we need to move up on right hull
-        while(true) {
-            var nextRight = (upperRight + n2 - 1) % n2;
-            if(crossProduct(leftHull[upperLeft], rightHull[upperRight], rightHull[nextRight]) >= 0) {
-                break;
-            }
-            upperRight = nextRight;
-            done = false;
-            
-            // Visualize search
-            var tempLine = makeTemporaryLine(leftHull[upperLeft], rightHull[upperRight], '#f39c12');
-            highlightPoint(rightHull[upperRight], '#f39c12');
+        // Check right hull for a better point
+        var nextRight = (upperRight + n2 - 1) % n2;
+        if (crossProduct(leftHull[upperLeft], rightHull[upperRight], rightHull[nextRight]) < 0) {
+            var tempLine = makeTemporaryLine(leftHull[upperLeft], rightHull[nextRight], '#f39c12');
+            highlightPoint(rightHull[nextRight], '#f39c12');
             await sleep(delay / 2);
             $(tempLine).remove();
-            unhighlightPoint(rightHull[upperRight]);
-            
-            if(shouldStopAnimation) return [];
+            unhighlightPoint(rightHull[nextRight]);
+
+            upperRight = nextRight;
+            changed = true;
         }
+        
+        if (!changed) break;
     }
-    
+
     // Show upper tangent
     var upperTangent = makeTemporaryLine(leftHull[upperLeft], rightHull[upperRight], '#e74c3c');
     await sleep(delay);
@@ -117,48 +108,38 @@ async function mergeHulls(leftHull, rightHull, delay) {
     // Find lower tangent
     var lowerLeft = rightmostLeft;
     var lowerRight = leftmostRight;
-    done = false;
-    
-    while(!done && !shouldStopAnimation) {
-        done = true;
-        
-        // Check if we need to move down on left hull
-        while(true) {
-            var nextLeft = (lowerLeft + n1 - 1) % n1;
-            if(crossProduct(rightHull[lowerRight], leftHull[lowerLeft], leftHull[nextLeft]) >= 0) {
-                break;
-            }
+
+    while (true) {
+        if (shouldStopAnimation) return [];
+        var changed = false;
+
+        // Check left hull for a better point
+        var nextLeft = (lowerLeft + n1 - 1) % n1;
+        if (crossProduct(rightHull[lowerRight], leftHull[lowerLeft], leftHull[nextLeft]) < 0) {
+            var tempLine = makeTemporaryLine(rightHull[lowerRight], leftHull[nextLeft], '#9b59b6');
+            highlightPoint(leftHull[nextLeft], '#9b59b6');
+            await sleep(delay / 2);
+            $(tempLine).remove();
+            unhighlightPoint(leftHull[nextLeft]);
+
             lowerLeft = nextLeft;
-            done = false;
-            
-            // Visualize search
-            var tempLine = makeTemporaryLine(rightHull[lowerRight], leftHull[lowerLeft], '#9b59b6');
-            highlightPoint(leftHull[lowerLeft], '#9b59b6');
+            changed = true;
+        }
+
+        // Check right hull for a better point
+        var nextRight = (lowerRight + 1) % n2;
+        if (crossProduct(leftHull[lowerLeft], rightHull[lowerRight], rightHull[nextRight]) > 0) {
+            var tempLine = makeTemporaryLine(leftHull[lowerLeft], rightHull[nextRight], '#9b59b6');
+            highlightPoint(rightHull[nextRight], '#9b59b6');
             await sleep(delay / 2);
             $(tempLine).remove();
-            unhighlightPoint(leftHull[lowerLeft]);
-            
-            if(shouldStopAnimation) return [];
-        }
-        
-        // Check if we need to move down on right hull
-        while(true) {
-            var nextRight = (lowerRight + 1) % n2;
-            if(crossProduct(leftHull[lowerLeft], rightHull[lowerRight], rightHull[nextRight]) <= 0) {
-                break;
-            }
+            unhighlightPoint(rightHull[nextRight]);
+
             lowerRight = nextRight;
-            done = false;
-            
-            // Visualize search
-            var tempLine = makeTemporaryLine(leftHull[lowerLeft], rightHull[lowerRight], '#9b59b6');
-            highlightPoint(rightHull[lowerRight], '#9b59b6');
-            await sleep(delay / 2);
-            $(tempLine).remove();
-            unhighlightPoint(rightHull[lowerRight]);
-            
-            if(shouldStopAnimation) return [];
+            changed = true;
         }
+
+        if (!changed) break;
     }
     
     // Show lower tangent
@@ -168,19 +149,18 @@ async function mergeHulls(leftHull, rightHull, delay) {
     // Remove temporary tangent lines
     $(upperTangent).remove();
     $(lowerTangent).remove();
+    unhighlightPoint(leftHull[rightmostLeft]);
+    unhighlightPoint(rightHull[leftmostRight]);
     
     // Build merged hull in counter-clockwise order
     var mergedHull = [];
-    
-    // Start from upper tangent on left hull, go counter-clockwise to lower tangent
     var index = upperLeft;
     mergedHull.push(leftHull[index]);
     while(index !== lowerLeft) {
-        index = (index + n1 - 1) % n1;
+        index = (index + 1) % n1;
         mergedHull.push(leftHull[index]);
     }
     
-    // From lower tangent on right hull, go counter-clockwise to upper tangent
     index = lowerRight;
     mergedHull.push(rightHull[index]);
     while(index !== upperRight) {
@@ -197,40 +177,41 @@ async function divideAndConquer(pointSet, delay) {
     
     var n = pointSet.length;
     
-    // Base case: if 3 or fewer points, compute hull directly
-    if(n <= 3) {
-        // Visualize base case
-        pointSet.forEach(p => {
-            highlightPoint(p, '#2ecc71');
-        });
+    // Base case: if 5 or fewer points, compute hull directly using a simpler algorithm (e.g., Graham Scan logic)
+    if(n <= 5) {
+        pointSet.forEach(p => highlightPoint(p, '#2ecc71'));
         await sleep(delay);
-        pointSet.forEach(p => {
-            unhighlightPoint(p);
-        });
+        pointSet.forEach(p => unhighlightPoint(p));
         
-        if(n === 1) return [pointSet[0]];
-        if(n === 2) return [pointSet[0], pointSet[1]];
-        
-        // For 3 points, return them in counter-clockwise order
-        var p0 = pointSet[0], p1 = pointSet[1], p2 = pointSet[2];
-        var cross = crossProduct(p0, p1, p2);
-        
-        if(cross > 0) {
-            // Already counter-clockwise
-            return [p0, p1, p2];
-        } else if(cross < 0) {
-            // Clockwise, reverse to make counter-clockwise
-            return [p0, p2, p1];
-        } else {
-            // Collinear - return two points farthest apart
-            var d01 = Math.sqrt((p1.x - p0.x)**2 + (p1.y - p0.y)**2);
-            var d02 = Math.sqrt((p2.x - p0.x)**2 + (p2.y - p0.y)**2);
-            var d12 = Math.sqrt((p2.x - p1.x)**2 + (p2.y - p1.y)**2);
-            
-            if(d01 >= d02 && d01 >= d12) return [p0, p1];
-            if(d02 >= d01 && d02 >= d12) return [p0, p2];
-            return [p1, p2];
+        if (n < 3) return pointSet;
+
+        // Simple brute-force or Graham-like approach for small sets
+        let hull = [];
+        let minIdx = 0;
+        for (let i = 1; i < n; i++) {
+            if (pointSet[i].y < pointSet[minIdx].y || (pointSet[i].y === pointSet[minIdx].y && pointSet[i].x < pointSet[minIdx].x)) {
+                minIdx = i;
+            }
         }
+        
+        let anchor = pointSet[minIdx];
+        hull.push(anchor);
+
+        let sorted = pointSet.filter((_, i) => i !== minIdx).sort((a, b) => {
+            let angleA = Math.atan2(a.y - anchor.y, a.x - anchor.x);
+            let angleB = Math.atan2(b.y - anchor.y, b.x - anchor.x);
+            if (angleA < angleB) return -1;
+            if (angleA > angleB) return 1;
+            return 0;
+        });
+
+        for (let p of sorted) {
+            while (hull.length > 1 && crossProduct(hull[hull.length - 2], hull[hull.length - 1], p) <= 0) {
+                hull.pop();
+            }
+            hull.push(p);
+        }
+        return hull;
     }
     
     // Divide into two halves
