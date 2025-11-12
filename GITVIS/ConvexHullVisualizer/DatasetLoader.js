@@ -25,6 +25,8 @@ function generateFromDataset() {
     // Get canvas boundaries
     let canvas = document.getElementById("sandbox").getBoundingClientRect();
     let offset = 50;
+    let maxX = canvas.width - 2 * offset;
+    let maxY = canvas.height - 2 * offset;
     
     lines.forEach(function(line, index) {
         line = line.trim();
@@ -37,16 +39,23 @@ function generateFromDataset() {
         });
         
         if (coords.length >= 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
-            var x = coords[0];
-            var y = coords[1];
+            var inputX = coords[0];
+            var inputY = coords[1];
             
-            // Validate coordinates are within canvas bounds
-            if (x >= offset && x <= canvas.width - offset && 
-                y >= offset && y <= canvas.height - offset) {
-                CreateAutoPoint(x, y);
+            // Transform coordinates: origin at bottom-left
+            // Input (0,0) should map to bottom-left of canvas
+            // Input coordinate system: origin at bottom-left, y increases upward
+            // Canvas coordinate system: origin at top-left, y increases downward
+            var canvasX = offset + inputX;
+            var canvasY = canvas.height - offset - inputY; // Flip y-axis
+            
+            // Validate transformed coordinates are within canvas bounds
+            if (inputX >= 0 && inputX <= maxX && 
+                inputY >= 0 && inputY <= maxY) {
+                CreateAutoPoint(canvasX, canvasY);
                 validPoints++;
             } else {
-                invalidLines.push('Line ' + (index + 1) + ': coordinates out of bounds');
+                invalidLines.push('Line ' + (index + 1) + ': coordinates out of bounds (max: ' + maxX + ', ' + maxY + ')');
             }
         } else {
             invalidLines.push('Line ' + (index + 1) + ': invalid format');
