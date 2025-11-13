@@ -71,14 +71,10 @@ function parseAndLoadPoints(text) {
     
     // Split into lines
     var lines = text.split('\n');
-    var loadedCount = 0;
+    var tempPoints = [];
     var skippedCount = 0;
     
-    // Calculate canvas boundaries
-    var offset = 50;
-    var maxX = canvas.width - offset;
-    var maxY = canvas.height - offset;
-    
+    // First pass: collect all valid points
     lines.forEach(function(line, index) {
         // Remove whitespace
         line = line.trim();
@@ -88,14 +84,14 @@ function parseAndLoadPoints(text) {
             return;
         }
         
-        // Parse coordinates
-        var parts = line.split(',');
-        if (parts.length !== 2) {
-            console.warn('Line ' + (index + 1) + ' has invalid format: ' + line);
+        // Parse coordinates - accept space-separated ("100 100") or comma-separated ("100,100")
+        var parts = line.split(/[\s,]+/);
+        if (parts.length < 2) {
+            console.warn('Line ' + (index + 1) + ' has invalid format: ' + line + ' (expected: "x y" or "x, y")');
             skippedCount++;
             return;
         }
-        
+
         var inputX = parseFloat(parts[0].trim());
         var inputY = parseFloat(parts[1].trim());
         
@@ -106,15 +102,61 @@ function parseAndLoadPoints(text) {
             return;
         }
         
-        if (inputX < 0 || inputX > maxX || inputY < 0 || inputY > maxY) {
-            console.warn('Line ' + (index + 1) + ' out of bounds (' + inputX + ', ' + inputY + '). Max: (' + maxX + ', ' + maxY + ')');
-            skippedCount++;
-            return;
-        }
+        tempPoints.push({x: inputX, y: inputY});
+    });
+    
+    if (tempPoints.length === 0) {
+        console.log('No valid points to load');
+        return;
+    }
+    
+    // Find min and max values for auto-scaling
+    var minX = Math.min(...tempPoints.map(p => p.x));
+    var maxX = Math.max(...tempPoints.map(p => p.x));
+    var minY = Math.min(...tempPoints.map(p => p.y));
+    var maxY = Math.max(...tempPoints.map(p => p.y));
+    
+    var rangeX = maxX - minX;
+    var rangeY = maxY - minY;
+    
+    // Prevent division by zero for single point or collinear points
+    if (rangeX === 0) rangeX = 1;
+    if (rangeY === 0) rangeY = 1;
+    
+    // Calculate canvas usable area
+    var offset = 50;
+    var canvasWidth = canvas.width - 2 * offset;
+    var canvasHeight = canvas.height - 2 * offset;
+    
+    // Calculate scale factors to fit all points with padding
+    var padding = 0.1; // 10% padding on each side
+    var scaleX = canvasWidth * (1 - 2 * padding) / rangeX;
+    var scaleY = canvasHeight * (1 - 2 * padding) / rangeY;
+    
+    // Use the smaller scale to maintain aspect ratio and fit all points
+    var scale = Math.min(scaleX, scaleY);
+    
+    // Calculate center offset to center the points on canvas
+    var scaledWidth = rangeX * scale;
+    var scaledHeight = rangeY * scale;
+    var offsetX = (canvasWidth - scaledWidth) / 2;
+    var offsetY = (canvasHeight - scaledHeight) / 2;
+    
+    console.log('📐 Auto-scaling applied:');
+    console.log('  Data range: X[' + minX.toFixed(2) + ', ' + maxX.toFixed(2) + '] Y[' + minY.toFixed(2) + ', ' + maxY.toFixed(2) + ']');
+    console.log('  Scale factor: ' + scale.toFixed(2) + 'x');
+    console.log('  This magnifies small differences - even 0.1 unit difference will be visible!');
+    
+    // Second pass: scale and plot points
+    var loadedCount = 0;
+    tempPoints.forEach(function(point) {
+        // Scale coordinates relative to min values
+        var scaledX = (point.x - minX) * scale;
+        var scaledY = (point.y - minY) * scale;
         
-        // Transform coordinates (bottom-left origin to canvas coordinates)
-        var canvasX = canvas.left + offset + inputX;
-        var canvasY = canvas.top + (canvas.height - offset - inputY);
+        // Transform to canvas coordinates (bottom-left origin to top-left canvas origin)
+        var canvasX = canvas.left + offset + offsetX + scaledX;
+        var canvasY = canvas.top + canvas.height - offset - offsetY - scaledY;
         
         // Create the point
         CreateAutoPoint(canvasX, canvasY);
