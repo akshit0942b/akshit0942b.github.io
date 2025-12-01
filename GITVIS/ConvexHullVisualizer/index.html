@@ -65,6 +65,9 @@
 					</li>
 					<li id='totalPointsDiv'><a>Points: <input id="totalPoints" class="readOnlyInput" value="0" readonly="readonly" disabled></input></a></li>
 					<li id='totalPointsHullDiv'><a>Points in Hull: <input id="totalHullPoints" class="readOnlyInput" value="0" readonly="readonly" disabled></input></a></li>
+					<li id='compareButton'>
+						<button class="btn btn-default navbar-btn" type="button" onclick="openComparisonModal()">Compare Algorithms</button>
+					</li>
                 </ul>
             </div>
         </nav>
@@ -88,6 +91,68 @@
 			<span id="statsPoints"></span>
 			<span id="statsArea"></span>
 			<span id="statsPerimeter"></span>
+		</div>
+	</div>
+
+	<!-- Algorithm Comparison Modal -->
+	<div id="comparisonModal" class="comparison-modal">
+		<div class="comparison-modal-content">
+			<span class="comparison-close" onclick="closeComparisonModal()">&times;</span>
+			<h2>Algorithm Performance Comparison</h2>
+			
+			<div class="comparison-controls">
+				<div class="control-group">
+					<label for="distributionSelect">Select Distribution:</label>
+					<select id="distributionSelect" class="form-control">
+						<option value="1_uniform_square">Uniform Square</option>
+						<option value="2_gaussian_blob">Gaussian Blob</option>
+						<option value="3_multi_cluster_200_instance_1">Multi Cluster (Instance 1)</option>
+						<option value="3_multi_cluster_200_instance_2">Multi Cluster (Instance 2)</option>
+						<option value="3_multi_cluster_200_instance_3">Multi Cluster (Instance 3)</option>
+						<option value="3_multi_cluster_200_instance_4">Multi Cluster (Instance 4)</option>
+						<option value="3_multi_cluster_200_instance_5">Multi Cluster (Instance 5)</option>
+						<option value="4_uniform_disk">Uniform Disk</option>
+						<option value="5_circle_perimeter">Circle Perimeter</option>
+						<option value="6_rectangle_perimeter">Rectangle Perimeter</option>
+						<option value="7_log_normal">Log Normal</option>
+						<option value="8_laplace">Laplace</option>
+						<option value="9_pareto">Pareto</option>
+						<option value="10_parabola">Parabola</option>
+						<option value="11_fan">Fan</option>
+						<option value="12_spiral">Spiral</option>
+						<option value="13_sawtooth">Sawtooth</option>
+						<option value="14_grid">Grid</option>
+						<option value="15_needle">Needle</option>
+						<option value="16_mandelbrot">Mandelbrot</option>
+						<option value="17_poisson_process">Poisson Process</option>
+						<option value="18_onion">Onion</option>
+					</select>
+				</div>
+
+				<div class="control-group">
+					<label>Select Algorithms to Compare:</label>
+					<div class="algorithm-checkboxes">
+						<label><input type="checkbox" id="algoGraham" value="Graham_Scan"> Graham Scan</label>
+						<label><input type="checkbox" id="algoJarvis" value="Jarvis_March"> Jarvis March</label>
+						<label><input type="checkbox" id="algoQuickHull" value="QuickHull"> QuickHull</label>
+						<label><input type="checkbox" id="algoMonotone" value="Monotone_Chain"> Monotone Chain</label>
+						<label><input type="checkbox" id="algoOptimized" value="Optimized_Monotone"> Optimized Monotone</label>
+					</div>
+				</div>
+
+				<button class="btn btn-primary" onclick="loadComparison()">Compare</button>
+			</div>
+
+			<div id="comparisonResults" class="comparison-results">
+				<div id="timeComparison" class="comparison-section">
+					<h3>Time Comparison</h3>
+					<div id="timeImages"></div>
+				</div>
+				<div id="memoryComparison" class="comparison-section">
+					<h3>Memory Comparison</h3>
+					<div id="memoryImages"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -128,4 +193,7 @@
 
 <!--color change-->
 <script type="text/javascript" src="Colors.js"></script>
+
+<!--Algorithm Comparison-->
+<script type="text/javascript" src="AlgorithmComparison.js"></script>
 </html>
