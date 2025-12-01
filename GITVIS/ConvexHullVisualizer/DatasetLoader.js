@@ -22,9 +22,11 @@ function generateFromDataset() {
     var validPoints = 0;
     var invalidLines = [];
     
-    // Get canvas boundaries
+    // Get canvas boundaries (getBoundingClientRect returns absolute screen coordinates)
     let canvas = document.getElementById("sandbox").getBoundingClientRect();
-    let offset = 50;
+    let offset = 100; // Match the offset used in randomPoints()
+    
+    // Calculate the usable area for input coordinates
     let maxX = canvas.width - 2 * offset;
     let maxY = canvas.height - 2 * offset;
     
@@ -42,20 +44,21 @@ function generateFromDataset() {
             var inputX = coords[0];
             var inputY = coords[1];
             
-            // Transform coordinates: origin at bottom-left
-            // Input (0,0) should map to bottom-left of canvas
-            // Input coordinate system: origin at bottom-left, y increases upward
-            // Canvas coordinate system: origin at top-left, y increases downward
-            var canvasX = offset + inputX;
-            var canvasY = canvas.height - offset - inputY; // Flip y-axis
-            
-            // Validate transformed coordinates are within canvas bounds
+            // Validate input coordinates are within bounds (before transformation)
             if (inputX >= 0 && inputX <= maxX && 
                 inputY >= 0 && inputY <= maxY) {
-                CreateAutoPoint(canvasX, canvasY);
+                
+                // Transform coordinates: origin at bottom-left
+                // Input coordinate system: origin at bottom-left, y increases upward
+                // Screen coordinate system: origin at top-left, y increases downward
+                // CreateAutoPoint expects absolute screen coordinates
+                var screenX = canvas.left + offset + inputX;
+                var screenY = canvas.top + canvas.height - offset - inputY; // Flip y-axis
+                
+                CreateAutoPoint(screenX, screenY);
                 validPoints++;
             } else {
-                invalidLines.push('Line ' + (index + 1) + ': coordinates out of bounds (max: ' + maxX + ', ' + maxY + ')');
+                invalidLines.push('Line ' + (index + 1) + ': coordinates out of bounds (max: ' + Math.floor(maxX) + ', ' + Math.floor(maxY) + ')');
             }
         } else {
             invalidLines.push('Line ' + (index + 1) + ': invalid format');

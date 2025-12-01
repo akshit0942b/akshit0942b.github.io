@@ -1,4 +1,5 @@
 var points = new Array();
+
 let hull = new Array();
 
 //based on the situation

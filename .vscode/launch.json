@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/akshit/Downloads/PROJECTS/akshit0942b/akshit0942b.github.io/GITVIS/ConvexHullVisualizer/Algorithms",
+      "program": "/Users/akshit/Downloads/PROJECTS/akshit0942b/akshit0942b.github.io/GITVIS/ConvexHullVisualizer/Algorithms/build/Debug/outDebug"
+    }
+  ]
+}

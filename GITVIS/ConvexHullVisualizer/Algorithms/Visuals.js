@@ -19,7 +19,7 @@ function unhighlightPoint(point){
 }
 
 function connectTwoPoints(p1, p2){
-	MakeNewPath(p1, p2);
+	return MakeNewPath(p1, p2);
 }
 
 function makeTemporaryLine(p1, p2, color = '#e74c3c'){
@@ -51,7 +51,9 @@ function removeTemporaryLines(){
 
 
 function disconnectTwoPoints(line){
-	DeleteNewPath(line);
+	if(line) {
+		line.remove();
+	}
 }
 
 function changeTotalPointCount(total){
@@ -122,6 +124,8 @@ function MakeNewPath(p1, p2){
 
 	svg_container.append(newPath); 
 	AnimateLine(newPath);
+	
+	return newPath; // Return the path element so it can be tracked and removed
 }
 
 function AnimatePoint(node){

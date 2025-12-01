@@ -10,7 +10,7 @@
 		<nav class="navbar navbar-inverse">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<img src="images/logo.png" style="position: absolute; width: 50; height:45; left:0px; top:0px" >
+					<img src="images/logo.png" style="position: absolute; width: 50; height:45; left:0px; top:0px; filter: brightness(0) invert(1);" >
 					<a id="refreshButton" class="navbar-brand" href="https://github.com/akshit0942b" target="_blank" style="position: relative; left:30px;">
 					Convex Hull Visualizer
 					</a>
@@ -59,8 +59,8 @@
 					<li class="dropdown">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Colors<span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li id='colorButton-line'><a>Lines &nbsp; &nbsp;<input type="button" id="color-button-line" class="jscolor color-button" onchange="changeColor_line(this.value)" value="11ffa0"></button></a></li>
-							<li id='colorButton-point'><a>Points &nbsp;     <input type="button" id="color-button-point" class="jscolor color-button" onchange="changeColor_point(this.value)" value="34495e"></button></a></li>
+							<li id='colorButton-line'><a>Lines &nbsp; &nbsp;<input type="button" id="color-button-line" class="jscolor color-button" onchange="changeColor_line(this.value)" value="001f3f"></button></a></li>
+							<li id='colorButton-point'><a>Points &nbsp;     <input type="button" id="color-button-point" class="jscolor color-button" onchange="changeColor_point(this.value)" value="000000"></button></a></li>
 						</ul>
 					</li>
 					<li id='totalPointsDiv'><a>Points: <input id="totalPoints" class="readOnlyInput" value="0" readonly="readonly" disabled></input></a></li>
@@ -86,6 +86,8 @@
 			<span id="statsAlgorithm"></span>
 			<span id="statsTime"></span>
 			<span id="statsPoints"></span>
+			<span id="statsArea"></span>
+			<span id="statsPerimeter"></span>
 		</div>
 	</div>
 

@@ -89,6 +89,12 @@ async function ConvexHull_JarvisMarch(){
 		
 		// Highlight as finalized hull vertex with bright green
 		highlightPoint(nxtPoint, '#2ecc71');
+		
+		// Connect the new hull point to the previous one
+		if(hull.length >= 2){
+			connectTwoPoints(hull[hull.length - 2], hull[hull.length - 1]);
+		}
+		
 		await sleep(delay / 2);
 
 		//pop new hullpoint out of point set 
@@ -102,7 +108,7 @@ async function ConvexHull_JarvisMarch(){
 		hull.pop();
 
 		hull.forEach(el => point_html.get(el).className = "point-hull");
-		ConnectHull();
+		// The hull is already connected during the algorithm, no need to reconnect
 	}
 	
 	removeTemporaryLines();

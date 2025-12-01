@@ -3,15 +3,24 @@ let shouldStopAnimation = false;
 let computationStartTime = 0;
 let computationEndTime = 0;
 
-function showStats(algorithmName, timeTaken, pointsProcessed, hullSize) {
+function showStats(algorithmName, timeTaken, pointsProcessed, hullSize, area, perimeter) {
 	var statsBar = document.getElementById('statsBar');
 	var statsAlgorithm = document.getElementById('statsAlgorithm');
 	var statsTime = document.getElementById('statsTime');
 	var statsPoints = document.getElementById('statsPoints');
+	var statsArea = document.getElementById('statsArea');
+	var statsPerimeter = document.getElementById('statsPerimeter');
 	
 	statsAlgorithm.textContent = 'Algorithm: ' + algorithmName;
 	statsTime.textContent = 'Computation Time: ' + timeTaken.toFixed(3) + ' ms';
 	statsPoints.textContent = 'Points: ' + pointsProcessed + ' | Hull: ' + hullSize;
+	if (area !== undefined && perimeter !== undefined) {
+		statsArea.textContent = 'Area: ' + area.toFixed(2);
+		statsPerimeter.textContent = 'Perimeter: ' + perimeter.toFixed(2);
+	} else {
+		statsArea.textContent = '';
+		statsPerimeter.textContent = '';
+	}
 	
 	statsBar.className = 'visible';
 	
@@ -84,12 +93,35 @@ async function GenerateHullDirectly(){
 	computationEndTime = performance.now();
 	var timeTaken = computationEndTime - computationStartTime;
 	var hullSize = hull.length;
+	var area = calculatePolygonArea(hull);
+	var perimeter = calculatePolygonPerimeter(hull);
 	
-	showStats(currentSelected, timeTaken, totalPoints, hullSize);
+	showStats(currentSelected, timeTaken, totalPoints, hullSize, area, perimeter);
 
 	//Restore original speed
 	currentSelectedSpeed = originalSpeed;
 	UpdatePointCounters();
+}
+
+function calculatePolygonArea(points) {
+    let area = 0;
+    for (let i = 0; i < points.length; i++) {
+        let j = (i + 1) % points.length;
+        area += points[i].x * points[j].y;
+        area -= points[j].x * points[i].y;
+    }
+    return Math.abs(area) / 2;
+}
+
+function calculatePolygonPerimeter(points) {
+    let perimeter = 0;
+    for (let i = 0; i < points.length; i++) {
+        let j = (i + 1) % points.length;
+        let dx = points[j].x - points[i].x;
+        let dy = points[j].y - points[i].y;
+        perimeter += Math.sqrt(dx * dx + dy * dy);
+    }
+    return perimeter;
 }
 
 async function Visualize(){
@@ -123,6 +155,9 @@ async function Visualize(){
 	//navbar buttons get red
 	DisableButtons();
 
+	// Start timing
+	computationStartTime = performance.now();
+
 	switch(currentSelected) {
 		case "Jarvis March":
 			await ConvexHull_JarvisMarch();
@@ -142,6 +177,17 @@ async function Visualize(){
 		default:
     			break;
 	}
+
+	// End timing and show stats
+	computationEndTime = performance.now();
+	var timeTaken = computationEndTime - computationStartTime;
+	var hullSize = hull.length;
+	var totalPoints = $('.point').length;
+	var area = calculatePolygonArea(hull);
+	var perimeter = calculatePolygonPerimeter(hull);
+	
+	showStats(currentSelected, timeTaken, totalPoints, hullSize, area, perimeter);
+
 	UpdatePointCounters();
 }
 

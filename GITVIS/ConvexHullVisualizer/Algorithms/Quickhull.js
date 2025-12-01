@@ -79,9 +79,16 @@ async function addSegments(line, points, delay) {
     if(!distal.max) {
         $(tempLine).remove();
         // Finalize this point as a hull vertex
+        var prevHullLength = hull.length;
         hull.push(line[0]);
         addToHull(line[0]);
         highlightPoint(line[0], '#2ecc71');
+        
+        // Connect to previous hull point if exists
+        if(prevHullLength > 0){
+            connectTwoPoints(hull[prevHullLength - 1], line[0]);
+        }
+        
         await sleep(delay / 2);
         return;
     }
@@ -148,7 +155,10 @@ async function ConvexHull_Quickhull(){
         hull.pop();
 
         hull.forEach(el => point_html.get(el).className = "point-hull");
-        ConnectHull();
+        // Connect the last point back to first to close the hull
+        if(hull.length >= 2){
+            connectTwoPoints(hull[hull.length - 1], hull[0]);
+        }
     }
     
     removeTemporaryLines();

@@ -33,6 +33,7 @@ async function ConvexHull_GrahamScale(){
 	}
 
 	var delay = getDelay();
+	var hullLines = []; // Track lines between hull points
 
 	let sorted_points = points.sort((a,b) => b.y - a.y);
 	hull = [];
@@ -78,24 +79,36 @@ async function ConvexHull_GrahamScale(){
 			
 			if(shouldStopAnimation) break;
 			
-	    	if (hull.length > 1 && ccw(hull[hull.length - 2], hull[hull.length - 1], p)) {
+			// Keep removing points that make right turns
+			while (hull.length > 1 && ccw(hull[hull.length - 2], hull[hull.length - 1], p)) {
 				// Point makes a right turn, remove last point from hull
 				var removed = hull.pop();
 				if(point_html.get(removed)){
 					point_html.get(removed).className = "point";
 					unhighlightPoint(removed);
 				}
-	    	} 
-	    	else{
-				// Point makes a left turn, add to hull
-	      		hull.push(p);
-				addToHull(p);
-				// Highlight as finalized hull vertex with bright green
-				highlightPoint(p, '#2ecc71');
-				await sleep(delay / 2);
-				pointIndex++;
-				done++;
-	    	}
+				// Remove the last line segment since we removed a point
+				if(hullLines.length > 0){
+					var lastLine = hullLines.pop();
+					disconnectTwoPoints(lastLine);
+				}
+			}
+			
+			// Point makes a left turn (or collinear), add to hull
+			hull.push(p);
+			addToHull(p);
+			// Highlight as finalized hull vertex with bright green
+			highlightPoint(p, '#2ecc71');
+			
+			// Connect the new hull point to the previous one immediately
+			if(hull.length >= 2){
+				var line = connectTwoPoints(hull[hull.length - 2], hull[hull.length - 1]);
+				hullLines.push(line);
+			}
+			
+			await sleep(delay / 2);
+			pointIndex++;
+			done++;
 			
 			removeTemporaryLines();
 			if(hull.indexOf(p) === -1){
@@ -110,7 +123,10 @@ async function ConvexHull_GrahamScale(){
 
 	if(!shouldStopAnimation){
 		hull.forEach(el => point_html.get(el).className = "point-hull");
-		ConnectHull();
+		// Close the hull by connecting last to first
+		if(hull.length >= 2){
+			connectTwoPoints(hull[hull.length - 1], hull[0]);
+		}
 	}
 	
 	removeTemporaryLines();

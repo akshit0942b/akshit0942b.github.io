@@ -28,6 +28,7 @@ async function ConvexHull_MonotoneChain() {
 	var delay = getDelay();
 	let sorted_by_x = points.sort((a,b) => a.x - b.x);
   	var lower = [];
+	var lowerLines = []; // Track lower hull lines
   	hull = [];
   
 	// Build lower hull
@@ -43,6 +44,11 @@ async function ConvexHull_MonotoneChain() {
 				point_html.get(removed).className = "point";
 				unhighlightPoint(removed);
 			}
+			// Remove the last line segment
+			if(lowerLines.length > 0){
+				var lastLine = lowerLines.pop();
+				disconnectTwoPoints(lastLine);
+			}
 		}
 		
 		// Show the lower hull being built
@@ -54,16 +60,25 @@ async function ConvexHull_MonotoneChain() {
 		
 		if(shouldStopAnimation) break;
 		
+		var prevLowerLength = lower.length;
 		lower.push(sorted_by_x[i]);
 		addToHull(sorted_by_x[i]);
 		// Highlight as finalized hull vertex
 		highlightPoint(sorted_by_x[i], '#2ecc71');
+		
+		// Connect to previous point in lower hull
+		if(prevLowerLength > 0){
+			var line = connectTwoPoints(lower[prevLowerLength - 1], sorted_by_x[i]);
+			lowerLines.push(line);
+		}
+		
 		await sleep(delay / 2);
 		unhighlightPoint(sorted_by_x[i]);
 	}
 
 	// Build upper hull
 	var upper = [];
+	var upperLines = []; // Track upper hull lines
 	for (var i = sorted_by_x.length - 1; i >= 0; i--) {
 		if(shouldStopAnimation) break;
 		
@@ -74,6 +89,11 @@ async function ConvexHull_MonotoneChain() {
 			if(point_html.get(removed)){
 				point_html.get(removed).className = "point";
 				unhighlightPoint(removed);
+			}
+			// Remove the last line segment
+			if(upperLines.length > 0){
+				var lastLine = upperLines.pop();
+				disconnectTwoPoints(lastLine);
 			}
 		}
 		
@@ -86,10 +106,18 @@ async function ConvexHull_MonotoneChain() {
 		
 		if(shouldStopAnimation) break;
 		
+		var prevUpperLength = upper.length;
 		upper.push(sorted_by_x[i]);
 		addToHull(sorted_by_x[i]);
 		// Highlight as finalized hull vertex
 		highlightPoint(sorted_by_x[i], '#2ecc71');
+		
+		// Connect to previous point in upper hull
+		if(prevUpperLength > 0){
+			var line = connectTwoPoints(upper[prevUpperLength - 1], sorted_by_x[i]);
+			upperLines.push(line);
+		}
+		
 		await sleep(delay / 2);
 		unhighlightPoint(sorted_by_x[i]);
 	}
@@ -97,12 +125,19 @@ async function ConvexHull_MonotoneChain() {
 	if(!shouldStopAnimation){
 		upper.pop();
 		lower.pop();
+		
+		// Remove the duplicate connecting lines
+		if(lowerLines.length > 0) lowerLines.pop();
+		if(upperLines.length > 0) upperLines.pop();
 
 		//add both sets	
 		hull = lower.concat(upper);
 
 		hull.forEach(el => point_html.get(el).className = "point-hull");
-		ConnectHull();
+		// Close the hull by connecting the ends of upper and lower
+		if(hull.length >= 2){
+			connectTwoPoints(hull[hull.length - 1], hull[0]);
+		}
 	}
 	
 	removeTemporaryLines();
