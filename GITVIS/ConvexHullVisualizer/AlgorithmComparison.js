@@ -74,6 +74,10 @@ function displayComparison(distribution, algorithms) {
         const timeImg = document.createElement('img');
         timeImg.src = `${basePath}${algo}_Time.png`;
         timeImg.alt = `${algo} Time`;
+        timeImg.className = 'zoomable-image';
+        timeImg.onclick = function() {
+            openLightbox(this.src, this.alt);
+        };
         timeImg.onerror = function() {
             this.parentElement.innerHTML = `<div class="error-message">Image not found: ${algo}_Time.png</div>`;
         };
@@ -93,6 +97,10 @@ function displayComparison(distribution, algorithms) {
         const memoryImg = document.createElement('img');
         memoryImg.src = `${basePath}${algo}_Memory.png`;
         memoryImg.alt = `${algo} Memory`;
+        memoryImg.className = 'zoomable-image';
+        memoryImg.onclick = function() {
+            openLightbox(this.src, this.alt);
+        };
         memoryImg.onerror = function() {
             this.parentElement.innerHTML = `<div class="error-message">Image not found: ${algo}_Memory.png</div>`;
         };
@@ -124,3 +132,44 @@ function formatDistributionName(dist) {
     // Remove number prefix and format
     return dist.replace(/^\d+_/, '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
+
+// Image Lightbox Functions
+function openLightbox(src, caption) {
+    const lightbox = document.getElementById('imageLightbox');
+    const lightboxImg = document.getElementById('lightboxImage');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    
+    lightbox.style.display = 'flex';
+    lightboxImg.src = src;
+    lightboxCaption.textContent = caption;
+    
+    // Prevent body scrolling when lightbox is open
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('imageLightbox');
+    lightbox.style.display = 'none';
+    
+    // Restore body scrolling
+    document.body.style.overflow = 'auto';
+}
+
+// Close lightbox when clicking outside the image
+document.addEventListener('DOMContentLoaded', function() {
+    const lightbox = document.getElementById('imageLightbox');
+    if (lightbox) {
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
+    
+    // Close lightbox with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeLightbox();
+        }
+    });
+});
