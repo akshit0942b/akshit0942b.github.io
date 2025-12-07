@@ -134,12 +134,15 @@ let footer = $(`
 
         <div class="col-lg-6 col-md-12 mb-4 mb-md-0 form-comtainer">
           <div class="form-style-6">
-             <div class="form-header">
+              <div class="form-header">
                 <h6 class="display">Get in Touch</h6>
               </div>
-                <form name="form1" action="https://formcarry.com/s/BywEPAJNb" method="POST" accept-charset="UTF-8" >
+                <form id="contact-form" name="form1" action="https://formsubmit.co/akshitprajapati24@gmail.com" method="POST">
+                  <input type="hidden" name="_next" value="https://akshit0942b.github.io/index.html">
+                  <input type="hidden" name="_captcha" value="false">
+                  <input type="hidden" name="_subject" value="New submission from Portfolio">
                   <input id="name" type="text" name="name" placeholder="Your Name" required/>
-                  <input id="email" type="email" name="email" placeholder="Email Address" required/>                  
+                  <input id="email" type="email" name="_replyto" placeholder="Email Address" required/>
                   <textarea id="textArea" name="message" placeholder="Type your Message" required></textarea>
               
                   <div id="main">
@@ -439,42 +442,46 @@ $(window).on("load", function () {
 
 
 $(function submitAnimation() {
-  const name = document.querySelector("#name")
-  const emailAdress = document.querySelector("#email")
-  const text = document.querySelector("#textArea")
-  const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-
-  $("#lnch").on("click", function () {
+  // Use event delegation for dynamically added elements
+  $(document).on("click", "#lnch", function (e) {
+    e.preventDefault();
+    
+    const name = document.querySelector("#name");
+    const emailAdress = document.querySelector("#email");
+    const text = document.querySelector("#textArea");
+    const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 
     // Check if the name field is empty or contains a number
-    if (name.value == "" || (/\d/.test(name.value))) {
+    if (!name || name.value == "" || (/\d/.test(name.value))) {
       swal("Error !","Please enter a valid name !","error");
       return;
     }
     // Check if the email field is empty or email is not valid ex: test@@email.com
-    else if (emailAdress.value == "" || !(emailPattern.test(emailAdress.value))) {
+    else if (!emailAdress || emailAdress.value == "" || !(emailPattern.test(emailAdress.value))) {
       swal("Error !","Please enter a valid email !","error");
       return;
     }
     // Check if the message field is empty
-    else if (text.value == "") {
+    else if (!text || text.value == "") {
       swal("Error !","Please enter a valid message !","error");
       return;
     }
     else {
 
-      setTimeout(function () {
-        $("#lnch").addClass("launching").text("Sending");
-        $("#lnch_btn").addClass("launching");
-      }, 0);
+      // Start animation
+      $("#lnch").addClass("launching").text("Sending");
+      $("#lnch_btn").addClass("launching");
+
+      // Wait for animation then submit
       setTimeout(function () {
         $("#lnch").addClass("launched").text("SENT");
         $("#lnch_btn").addClass("launched");
+        
+        // Actually submit the form after animation
+        setTimeout(() => {
+          document.getElementById("contact-form").submit();
+        }, 500);
       }, 1500);
-      // Wait for 2.2 seconds so that the send button animation can be fully played before submitting the form
-      setTimeout(() => {
-        document.querySelector('form').submit();
-      }, 2200);
     }
   });
 });
