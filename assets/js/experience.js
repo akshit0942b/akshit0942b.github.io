@@ -5,7 +5,7 @@ AOS.init();
 const experiencecards = document.querySelector(".experience-cards");
 const exp = [
   {
-    title: "IOT Project Developer",
+    title: "IOT Project",
     cardImage: "assets/images/experience-page/flipkart.jpg",
     place: "IIIT Hyderabad",
     time: "(feb, 2025 - april, 2025)",
