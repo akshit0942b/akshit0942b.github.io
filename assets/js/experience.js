@@ -13,12 +13,12 @@ const exp = [
     link: "https://github.com/MukundHebbar/Symbiots.git",
   },
   {
-    title: "Convex Hull Visualizer",
-    cardImage: "assets/images/experience-page/graham.png",
-    place: "IIIT Hyderabad",
-    time: "Oct, 2025 - Dec, 2025",
-    desp: "<li>Interactive web-based visualizer to compute convex hulls.</li><li>Features include point plotting, real-time animation, and step-by-step algorithm execution.</li><li>Built with vanilla JavaScript and HTML5 Canvas for smooth, efficient rendering.</li>",
-    link: "GITVIS/ConvexHullVisualizer/index.html",
+    title: "Hustlr",
+    cardImage: "assets/images/experience-page/hustlr.png",
+    place: "Web Frontend Lead",
+    time: "Jan 2025 - Present",
+    desp: "<li>Leading frontend development for hustlr web connecting clients with student talent.</li><li>Designed and implemented scalable, responsive UI for user/client onboarding and project workflows.</li><li>Collaborated with backend and product teams to improve user experience and platform usability.</li>",
+    link: "#",
   },
   {
     title: "QIDK",
@@ -89,22 +89,22 @@ document.addEventListener("DOMContentLoaded", showCards2);
 const volunteership = document.querySelector(".volunteership");
 const volunteershipcards = [
   {
-    title: "C++ & Data Structures",
+    title: "Programming & Algorithms",
     cardImage: "assets/images/experience-page/1.jpg",
     description:
-      "Strong command over C++ and core data structures, enabling efficient problem-solving and algorithm design.",
+      "Strong command over C++ and Python, enabling efficient problem-solving, algorithm design, and core data structures.",
   },
   {
-    title: "Python & Computer Vision",
+    title: "Deep Learning & Vision",
     cardImage: "assets/images/experience-page/2.jpg",
     description:
-      "Experienced in Python with OpenCV and MediaPipe for real-time gesture recognition and modelling.",
+      "Experienced in PyTorch, Neural Nets, Vision Architectures, and Transformers for building advanced AI models.",
   },
   {
     title: "Full Stack Development",
     cardImage: "assets/images/experience-page/3.jpg",
     description:
-      "Building dynamic websites using HTML, CSS, JavaScript, React, and backend APIs for Web dashboards.",
+      "Building dynamic, scalable websites and applications using React, TypeScript, HTML, CSS, and modern backend APIs.",
   },
 ];
 
@@ -143,11 +143,11 @@ const mentor = [
     href: "https://megathon.in",
   },
   {
-    title: "Kaggle",
-    subtitle: "Participant",
-    image: "assets/images/experience-page/ulhacks.png",
-    desp: "Nk Secutities organized a hackathon to build a model predicting missing implied volatility values for NIFTY50 index options using high-frequency trading data. The goal is to reconstruct the market’s volatility surface accurately, optimizing for mean squared error.",
-    href: "https://www.kaggle.com/competitions/nk-iv-prediction/overview",
+    title: "The 2026 NeuroGolf Championship",
+    subtitle: "THE NEUROSYNTHETIC RESEARCH INSTITUTE · RESEARCH PREDICTION COMPETITION",
+    image: "assets/images/experience-page/neurogolf.png",
+    desp: "Design the smallest neural networks to solve ARC-AGI image transformations. (2 MONTHS TO GO)",
+    href: "https://www.kaggle.com/competitions/neurogolf-2026/overview",
   },
 ];
 
@@ -173,6 +173,9 @@ const showCards3 = () => {
   // Refresh AOS to animate the newly added content
   if (typeof AOS !== 'undefined') {
     AOS.refresh();
+  }
+  if (typeof swiper !== 'undefined') {
+    swiper.update();
   }
 };
 document.addEventListener("DOMContentLoaded", showCards3);

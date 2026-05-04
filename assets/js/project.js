@@ -6,22 +6,24 @@ const projectcards = document.querySelector(".projectcards");
 // Array of object for projects
 const projects = [
   {
-    title: "Gesture Controlled media player",
-    cardImage: "assets/images/project-page/quiz.jpg",
-    description: "A gesture-controlled media player built using Python and OpenCV.",
+    title: "Minimal ViT",
+    cardImage: "assets/images/project-page/dip.png",
+    Previewlink: "",
+    Githublink: "https://github.com/akshit0942b/Minimal-ViT",           
   },
   
   {
-    title: "Flappy Bird",
-    cardImage: "assets/images/project-page/flappybird.png",
-    description: "Flappy bird game built using React.js",
+    title: "QIDK-ATOM",
+    cardImage: "assets/images/project-page/qidk.png",
+    Previewlink: "",
+    Githublink: "https://github.com/akshit0942b/QIDK-ATOM",
   },
   
   {
-    title: "Tic Tac Toe Game",
-    cardImage: "assets/images/project-page/tic-tac-toe.png",
-    description:
-      "A classic Tic Tac Toe game built using HTML, CSS, and JavaScript.",
+    title: "Neural-Nets-and-Deep-Learning",
+    cardImage: "assets/images/project-page/nn.png",
+    Previewlink: "",
+    Githublink: "https://github.com/akshit0942b/Neural-Nets-and-Deep-Learning", 
   },
 ];
 
