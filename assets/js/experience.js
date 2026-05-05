@@ -14,7 +14,7 @@ const exp = [
   },
   {
     title: "Hustlr",
-    cardImage: "assets/images/experience-page/hustlr.png",
+    cardImage: "assets/images/experience-page/hustlr.jpeg",
     place: "Web Frontend Lead",
     time: "Jan 2025 - Present",
     desp: "<li>Leading frontend development for hustlr web connecting clients with student talent.</li><li>Designed and implemented scalable, responsive UI for user/client onboarding and project workflows.</li><li>Collaborated with backend and product teams to improve user experience and platform usability.</li>",
@@ -149,7 +149,15 @@ const mentor = [
     desp: "Design the smallest neural networks to solve ARC-AGI image transformations. (2 MONTHS TO GO)",
     href: "https://www.kaggle.com/competitions/neurogolf-2026/overview",
   },
-];
+
+  {
+    title: "GraphRAG Inference Hackathon",
+    subtitle: "An Open benchmark for Graph & LLM systems",
+    image: "assets/images/experience-page/rag.jpg",
+    desp: "Three-pipeline GraphRAG system (LLM-Only, Basic RAG, and GraphRAG)",
+    href: "https://unstop.com/hackathons/graphrag-inference-hackathon-by-tigergraph-tigergraph-1678762?lb=h0V2RoxC&utm_medium=Share&utm_source=online_coding_challenge&utm_campaign=Harity1509",
+  },
+];  
 
 const showCards3 = () => {
   let output = "";
